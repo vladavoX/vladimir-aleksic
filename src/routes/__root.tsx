@@ -1,5 +1,10 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+	createRootRoute,
+	HeadContent,
+	Scripts,
+	useLocation,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useState } from "react";
 import { Header } from "#/components/header";
@@ -32,7 +37,10 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-	const [activeTabs, setActiveTabs] = useState<Set<string>>(new Set(["/"]));
+	const pathname = useLocation({ select: (location) => location.pathname });
+	const [activeTabs, setActiveTabs] = useState<Set<string>>(
+		new Set([pathname]),
+	);
 
 	return (
 		<html lang="en">
