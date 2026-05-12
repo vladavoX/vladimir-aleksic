@@ -1,0 +1,83 @@
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { XIcon } from "lucide-react";
+
+export function Main({
+	children,
+	activeTabs,
+	setActiveTabs,
+}: {
+	children: React.ReactNode;
+	activeTabs: Set<string>;
+	setActiveTabs: React.Dispatch<React.SetStateAction<Set<string>>>;
+}) {
+	const pathname = useLocation({ select: (location) => location.pathname });
+	const navigate = useNavigate();
+
+	const handleTabRemoval = (tab: string) => {
+		setActiveTabs((prev) => {
+			const newTabs = new Set(prev);
+			newTabs.delete(tab);
+			return newTabs;
+		});
+
+		if (pathname === tab) {
+			const remainingTabs = [...activeTabs].filter((t) => t !== tab);
+			if (remainingTabs.length > 0) {
+				navigate({ to: remainingTabs[remainingTabs.length - 1] });
+			} else {
+				navigate({ to: "/" });
+			}
+		}
+	};
+
+	return (
+		<div className="[grid-area:main]">
+			<div className="border-b border-divider">
+				<ul className="flex items-center">
+					{[...activeTabs].map((tab) => (
+						<li key={tab} className="h-8 flex items-center">
+							<Link
+								to={tab}
+								activeProps={{ className: "border-accent bg-accent/10" }}
+								inactiveProps={{
+									className: "border-transparent hover:border-divider",
+								}}
+								className="h-full w-full py-2 px-4 border-b flex items-center justify-between"
+							>
+								{tab === "/" && "README.md"}
+								{tab === "/now" && "now.txt"}
+								{tab === "/skills" && "skills.json"}
+								{tab === "/experience" && "experience.log"}
+								{activeTabs.size > 1 && (
+									<button
+										type="button"
+										onClick={(e) => {
+											e.preventDefault();
+											handleTabRemoval(tab);
+										}}
+										className="ml-2 cursor-pointer text-muted hover:text-white/70 transition-colors"
+									>
+										<span className="sr-only">Close tab</span>
+										<XIcon className="size-3" />
+									</button>
+								)}
+							</Link>
+						</li>
+					))}
+				</ul>
+			</div>
+			<div className="py-2 px-4 flex items-center justify-between text-xs text-accent border-b border-divider">
+				<p className="flex items-center gap-2">
+					<span className="text-subtle">~</span>
+					<span className="text-muted">/</span>
+					{pathname === "/" && "README.md"}
+					{pathname === "/now" && "now.txt"}
+					{pathname === "/skills" && "skills.json"}
+					{pathname === "/experience" && "experience.log"}
+				</p>
+				<p className="text-muted">READ-ONLY</p>
+			</div>
+			{children}
+		</div>
+	);
+}
