@@ -4,8 +4,8 @@
 @theme {
   --color-prompt: var(--color-amber-300);
   --color-host: var(--color-cyan-300);
-  --color-accent: var(--color-green-600);
-  --color-accent-border: var(--color-green-800);
+  --color-accent: oklch(64% 0.15 151);
+  --color-accent-border: oklch(44% 0.12 151);
   --color-muted: var(--color-gray-600);
   --color-mid: var(--color-gray-500);
   --color-subtle: var(--color-gray-400);
@@ -29,6 +29,6 @@ body {
 }
 
 ::selection {
-  background-color: var(--color-green-500);
+  background-color: var(--color-accent);
   color: var(--color-black);
 }

@@ -57,7 +57,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<aside className="[grid-area:rSidebar] p-4 border-l border-divider">
 						Right Sidebar Content
 					</aside>
-					<footer className="[grid-area:footer] px-4 py-2 border-t border-divider">
+					<footer className="[grid-area:footer] px-4 py-2 border-t border-divider bg-black">
 						Footer Content
 					</footer>
 				</div>

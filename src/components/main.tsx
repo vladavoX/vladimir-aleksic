@@ -31,7 +31,7 @@ export function Main({
 	};
 
 	return (
-		<div className="[grid-area:main]">
+		<div className="[grid-area:main] flex flex-col">
 			<div className="border-b border-divider">
 				<ul className="flex items-center">
 					{[...activeTabs].map((tab) => (
