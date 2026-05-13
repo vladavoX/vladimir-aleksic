@@ -31,8 +31,8 @@ export function Main({
 	};
 
 	return (
-		<div className="[grid-area:main] flex flex-col">
-			<div className="border-b border-divider">
+		<div className="[grid-area:main] flex flex-col min-h-0 overflow-hidden">
+			<div className="border-b border-divider shrink-0">
 				<ul className="flex items-center">
 					{[...activeTabs].map((tab) => (
 						<li key={tab} className="h-8 flex items-center">
@@ -66,7 +66,7 @@ export function Main({
 					))}
 				</ul>
 			</div>
-			<div className="py-2 px-4 flex items-center justify-between text-xs text-accent border-b border-divider">
+			<div className="py-2 px-4 flex items-center justify-between text-xs text-accent border-b border-divider shrink-0">
 				<p className="flex items-center gap-2">
 					<span className="text-subtle">~</span>
 					<span className="text-muted">/</span>
@@ -77,7 +77,9 @@ export function Main({
 				</p>
 				<p className="text-muted">READ-ONLY</p>
 			</div>
-			{children}
+			<div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+				{children}
+			</div>
 		</div>
 	);
 }

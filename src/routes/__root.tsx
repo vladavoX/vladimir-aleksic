@@ -48,7 +48,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<div className="grid grid-cols-[18rem_1fr_18rem] grid-rows-[auto_1fr_auto] min-h-screen [grid-template-areas:'header_header_header''sidebar_main_rSidebar''footer_footer_footer'] text-xs text-white/70">
+				<div className="grid grid-cols-[18rem_1fr_18rem] grid-rows-[auto_1fr_auto] h-screen overflow-hidden [grid-template-areas:'header_header_header''sidebar_main_rSidebar''footer_footer_footer'] text-xs text-white/70">
 					<Header />
 					<SidebarLeft setActiveTabs={setActiveTabs} />
 					<Main activeTabs={activeTabs} setActiveTabs={setActiveTabs}>
