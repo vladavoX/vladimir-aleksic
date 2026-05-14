@@ -41,6 +41,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	const [activeTabs, setActiveTabs] = useState<Set<string>>(
 		new Set([pathname]),
 	);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
 	return (
 		<html lang="en">
@@ -48,15 +49,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<div className="grid grid-cols-[18rem_1fr_18rem] grid-rows-[auto_1fr_auto] h-screen overflow-hidden [grid-template-areas:'header_header_header''sidebar_main_rSidebar''footer_footer_footer'] text-xs text-white/70">
-					<Header />
-					<SidebarLeft setActiveTabs={setActiveTabs} />
+				<div className="grid grid-cols-[1fr] md:grid-cols-[18rem_1fr] grid-rows-[auto_1fr_auto] h-screen overflow-hidden [grid-template-areas:'header''main''footer'] md:[grid-template-areas:'header_header''sidebar_main''footer_footer'] text-xs text-white/70">
+					<Header onMenuClick={() => setIsSidebarOpen((o) => !o)} />
+					<SidebarLeft
+						setActiveTabs={setActiveTabs}
+						isOpen={isSidebarOpen}
+						onClose={() => setIsSidebarOpen(false)}
+					/>
 					<Main activeTabs={activeTabs} setActiveTabs={setActiveTabs}>
 						{children}
 					</Main>
-					<aside className="[grid-area:rSidebar] p-4 border-l border-divider">
+					{/* TODO: right sidebar — live GitHub stats. Out of scope for MVP. */}
+					{/* <aside className="[grid-area:rSidebar] p-4 border-l border-divider">
 						Right Sidebar Content
-					</aside>
+					</aside> */}
 					<footer className="[grid-area:footer] px-4 py-2 border-t border-divider bg-black">
 						Footer Content
 					</footer>

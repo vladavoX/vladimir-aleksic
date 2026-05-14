@@ -33,7 +33,7 @@ export function Main({
 	return (
 		<div className="[grid-area:main] flex flex-col min-h-0 overflow-hidden">
 			<div className="border-b border-divider shrink-0">
-				<ul className="flex items-center">
+				<ul className="flex items-center overflow-auto">
 					{[...activeTabs].map((tab) => (
 						<li key={tab} className="h-8 flex items-center">
 							<Link

@@ -66,14 +66,14 @@ const quickStats = [
 
 function Home() {
 	return (
-		<div className="bg-muted/10 flex-1 p-8 flex flex-col gap-6">
+		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
 			<div className="space-y-2">
 				<h1 className="text-accent text-2xl">Vladimir Aleksic</h1>
 				<p className="text-subtle text-sm">
 					Full-Stack Software Developer · Novi Sad, RS
 				</p>
 			</div>
-			<div className="flex items-center gap-2">
+			<div className="flex items-center gap-2 flex-wrap">
 				{chips.map((chip) => (
 					<p
 						key={chip.label}
@@ -88,14 +88,14 @@ function Home() {
 			</div>
 			<div className="space-y-2">
 				{paragraphs.map((text) => (
-					<p key={text.slice(0, 24)} className="text-sm max-w-2/3">
+					<p key={text.slice(0, 24)} className="text-sm xl:max-w-2/3">
 						{text}
 					</p>
 				))}
 			</div>
 			<div className="border border-divider p-4 rounded-sm space-y-4">
 				<h2 className="text-accent">BY THE NUMBERS</h2>
-				<div className="grid grid-cols-2 gap-2">
+				<div className="grid lg:grid-cols-2 gap-2">
 					{stats.map((stat) => (
 						<div
 							key={stat.label}
@@ -113,7 +113,7 @@ function Home() {
 			</div>
 			<div className="border border-divider p-4 rounded-sm space-y-4">
 				<h2 className="text-accent">QUICK STATS</h2>
-				<div className="grid grid-cols-2 gap-2">
+				<div className="grid lg:grid-cols-2 gap-2">
 					{quickStats.map((stat) => (
 						<div
 							key={stat.label}

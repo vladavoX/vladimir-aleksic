@@ -1,7 +1,26 @@
-export function Header() {
+import { Menu, Search } from "lucide-react";
+
+export function Header({ onMenuClick }: { onMenuClick: () => void }) {
 	return (
-		<header className="[grid-area:header] px-4 justify-between flex items-center border-b border-divider">
-			<div className="flex items-center">
+		<header className="[grid-area:header] md:px-4 h-8.25 md:h-auto justify-between flex items-center border-b border-divider">
+			<div className="flex md:hidden items-center justify-between w-full">
+				<button
+					type="button"
+					onClick={onMenuClick}
+					className="text-accent cursor-pointer px-4 py-2 active:bg-accent/10"
+				>
+					<span className="sr-only">Open menu</span>
+					<Menu className="size-4 shrink-0" />
+				</button>
+				<button
+					type="button"
+					className="text-white/70 cursor-pointer px-4 py-2 active:bg-accent/10"
+				>
+					<span className="sr-only">Search</span>
+					<Search className="size-4 shrink-0" />
+				</button>
+			</div>
+			<div className="hidden md:flex items-center">
 				<p className="pr-2 text-muted">
 					<span className="text-prompt/70">0:</span> portfolio
 				</p>
@@ -12,7 +31,7 @@ export function Header() {
 					<span className="text-prompt/70">2:</span> zsh
 				</p>
 			</div>
-			<p className="text-host/70">
+			<p className="hidden md:block text-host/70">
 				vladimir<span className="text-muted">@</span>dev.local
 			</p>
 		</header>
