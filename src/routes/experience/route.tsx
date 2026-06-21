@@ -5,37 +5,109 @@ export const Route = createFileRoute("/experience")({
 	component: RouteComponent,
 });
 
+const PLAINLY_GH = "https://github.com/plainly-videos";
+
+function Repo({ name, children }: { name: string; children: React.ReactNode }) {
+	return (
+		<a
+			href={`${PLAINLY_GH}/${name}`}
+			target="_blank"
+			rel="noreferrer"
+			className="text-host underline-offset-2 hover:underline"
+		>
+			{children}
+		</a>
+	);
+}
+
 const timeline = [
 	{
-		period: "2023 — Present",
+		period: "Nov 2023 — Present",
 		title: "Full-Stack Developer",
-		company: "Plainly Videos",
+		company: "Plainly",
 		active: true,
 		points: [
-			"Build and ship features across the React/TypeScript frontend and Node backend.",
-			"Own video-templating and rendering workflows end to end.",
-			"Review PRs and mentor on frontend architecture.",
+			{
+				id: "langs",
+				body: "Frontend, E2E and Node development in TypeScript / JavaScript, with some Java.",
+			},
+			{ id: "videos", body: "Working on the core product, Plainly Videos." },
+			{ id: "flows", body: "Building the upcoming product, Plainly Flows." },
+			{
+				id: "oss",
+				body: (
+					<>
+						Maintaining open source: the{" "}
+						<Repo name="after-effects-plugin">After Effects plugin</Repo> (Adobe
+						↔ Plainly integration) and the{" "}
+						<Repo name="examples">REST API examples</Repo>.
+					</>
+				),
+			},
+		],
+		stack: [
+			"Next.js",
+			"TanStack",
+			"React",
+			"TypeScript",
+			"JavaScript",
+			"shadcn/ui",
+			"Tailwind CSS",
+			"Node.js",
+			"Spring Boot",
+			"Java",
+			"REST API",
+			"Prisma",
+			"PostgreSQL",
+			"MongoDB",
+			"Cypress",
+			"Playwright",
+			"Jest",
+			"Docker",
+			"GitHub Actions",
+			"ExtendScript (Adobe)",
 		],
 	},
 	{
-		period: "2021 — 2023",
-		title: "Software Developer",
-		company: "Previous Company",
+		period: "Nov 2022 — Nov 2023",
+		title: "Full-Stack Developer",
+		company: "Positive Tech",
 		active: false,
 		points: [
-			"Delivered customer-facing web apps with React and REST APIs.",
-			"Migrated legacy pages to a typed, component-driven codebase.",
+			{
+				id: "outsourcing",
+				body: "Outsourcing — shipped a wide range of client projects.",
+			},
+			{
+				id: "stack",
+				body: "Frontend and backend work with JavaScript / TypeScript, React and Node.",
+			},
+		],
+		stack: [
+			"React",
+			"React Native",
+			"Next.js",
+			"TypeScript",
+			"JavaScript",
+			"Node.js",
+			"REST API",
+			"WordPress",
+			"Shopify",
 		],
 	},
 	{
-		period: "2020 — 2021",
-		title: "Junior Developer",
-		company: "First Company",
+		period: "Oct 2022 — Nov 2022",
+		title: "Full Stack JavaScript Developer",
+		company: "Levi9 Technology Services · Internship",
 		active: false,
 		points: [
-			"Implemented UI features and fixed bugs across the stack.",
-			"Wrote tests and learned production workflows.",
+			{ id: "stack", body: "TypeScript, Node.js and JavaScript." },
+			{
+				id: "app",
+				body: "Built an app where you and your manager set and track personal growth goals — new skills to learn and areas to improve on.",
+			},
 		],
+		stack: ["TypeScript", "Node.js", "JavaScript", "REST API", "MySQL"],
 	},
 ];
 
@@ -50,10 +122,10 @@ function RouteComponent() {
 						return (
 							<li
 								key={`${item.company}-${item.period}`}
-								className="grid grid-cols-[5.5rem_1.25rem_1fr] gap-x-3 sm:grid-cols-[7rem_1.5rem_1fr] sm:gap-x-4"
+								className="grid grid-cols-[9.5rem_1.25rem_1fr] gap-x-3 sm:grid-cols-[9.5rem_1.5rem_1fr] sm:gap-x-4"
 							>
 								{/* years */}
-								<p className="pt-px text-left text-xs text-subtle">
+								<p className="pt-px text-left text-xs text-subtle whitespace-nowrap">
 									{item.period}
 								</p>
 
@@ -79,12 +151,22 @@ function RouteComponent() {
 									</p>
 									<ul className="mt-2 space-y-1 text-xs text-white">
 										{item.points.map((point) => (
-											<li key={point} className="flex gap-2">
+											<li key={point.id} className="flex gap-2">
 												<CornerDownRight className="mt-0.5 size-3 shrink-0 text-accent-border" />
-												<span>{point}</span>
+												<span>{point.body}</span>
 											</li>
 										))}
 									</ul>
+									<div className="mt-3 flex flex-wrap gap-1.5">
+										{item.stack.map((tech) => (
+											<span
+												key={tech}
+												className="rounded-sm border border-divider px-1.5 py-0.5 text-[10px] text-mid"
+											>
+												{tech}
+											</span>
+										))}
+									</div>
 								</div>
 							</li>
 						);
