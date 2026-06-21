@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { XIcon } from "lucide-react";
+import { fileName } from "#/files";
 
 export function Main({
 	children,
@@ -44,10 +45,7 @@ export function Main({
 								}}
 								className="h-full w-full py-2 px-4 border-b flex items-center justify-between"
 							>
-								{tab === "/" && "README.md"}
-								{tab === "/now" && "now.txt"}
-								{tab === "/skills" && "skills.json"}
-								{tab === "/experience" && "experience.log"}
+								{fileName(tab)}
 								{activeTabs.size > 1 && (
 									<button
 										type="button"
@@ -69,11 +67,8 @@ export function Main({
 			<div className="py-2 px-4 flex items-center justify-between text-xs text-accent border-b border-divider shrink-0">
 				<p className="flex items-center gap-2">
 					<span className="text-subtle">~</span>
-					<span className="text-muted">/</span>
-					{pathname === "/" && "README.md"}
-					{pathname === "/now" && "now.txt"}
-					{pathname === "/skills" && "skills.json"}
-					{pathname === "/experience" && "experience.log"}
+					<span className="text-muted">/portfolio/</span>
+					{fileName(pathname)}
 				</p>
 				<p className="text-muted">READ-ONLY</p>
 			</div>

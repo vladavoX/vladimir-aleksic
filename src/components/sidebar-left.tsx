@@ -1,16 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Braces, ChevronRight, Logs, Type } from "lucide-react";
-
-const files = [
-	{ icon: "M", name: "README.md", to: "/" },
-	{ icon: <Type className="size-3.5" />, name: "now.txt", to: "/now" },
-	{ icon: <Braces className="size-3.5" />, name: "skills.json", to: "/skills" },
-	{
-		icon: <Logs className="size-3.5" />,
-		name: "experience.log",
-		to: "/experience",
-	},
-];
+import { ChevronRight } from "lucide-react";
+import { files } from "#/files";
 
 export function SidebarLeft({
 	setActiveTabs,
@@ -54,7 +44,7 @@ export function SidebarLeft({
 				</div>
 				<div className="py-4 text-muted">
 					<ul className="text-sm">
-						<li className="text-muted py-2 px-4">~/</li>
+						<li className="text-muted py-2 px-4">~/portfolio/</li>
 						{files.map((file) => (
 							<li key={file.name}>
 								<Link
