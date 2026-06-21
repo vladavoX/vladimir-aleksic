@@ -122,10 +122,10 @@ function RouteComponent() {
 						return (
 							<li
 								key={`${item.company}-${item.period}`}
-								className="grid grid-cols-[9.5rem_1.25rem_1fr] gap-x-3 sm:grid-cols-[9.5rem_1.5rem_1fr] sm:gap-x-4"
+								className="grid grid-cols-[1.25rem_1fr] gap-x-3 lg:grid-cols-[9.5rem_1.5rem_1fr] lg:gap-x-4"
 							>
-								{/* years */}
-								<p className="pt-px text-left text-xs text-subtle whitespace-nowrap">
+								{/* years (left column on sm+) */}
+								<p className="hidden pt-px text-left text-xs text-subtle whitespace-nowrap lg:block">
 									{item.period}
 								</p>
 
@@ -144,6 +144,10 @@ function RouteComponent() {
 
 								{/* role + details */}
 								<div className={isLast ? "" : "pb-8"}>
+									{/* date label (mobile only — years column is hidden) */}
+									<p className="mb-1 text-xs text-subtle lg:hidden">
+										{item.period}
+									</p>
 									<p className="text-sm">
 										<span className="text-accent">{item.title}</span>{" "}
 										<span className="text-muted">@</span>{" "}
