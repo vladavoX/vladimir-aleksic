@@ -43,7 +43,7 @@ const skills = {
 
 function RouteComponent() {
 	return (
-		<div className="bg-muted/10 flex-1">
+		<div className="bg-muted/10 flex-1 px-4 md:px-8">
 			<JsonViewer value={skills} />
 		</div>
 	);
