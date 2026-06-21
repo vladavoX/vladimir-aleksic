@@ -22,7 +22,7 @@ const stats = [
 		label: "LANGUAGES IN PROD",
 		value: "3",
 		valueSuffix: "/ daily",
-		caption: "TS · JS · Java",
+		caption: "TypeScript · JavaScript · Java",
 	},
 	{
 		label: "COFFEE / DAY",
@@ -48,7 +48,7 @@ const paragraphs = [
 const quickStats = [
 	{
 		label: "STACK",
-		value: "TS · React · Node",
+		value: "TypeScript · React · Node",
 	},
 	{
 		label: "EDITOR",
@@ -56,7 +56,7 @@ const quickStats = [
 	},
 	{
 		label: "LEARNING NEXT",
-		value: "Rust + Zig",
+		value: "Rust / Zig",
 	},
 	{
 		label: "OFF-KEYBOARD",
