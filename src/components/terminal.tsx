@@ -47,6 +47,21 @@ export function Terminal() {
 		scrollToBottom();
 	}, [lines, open, scrollToBottom]);
 
+	// Clicking anywhere in the body focuses the input. Done with a native
+	// listener rather than an onClick so the scroll region stays a plain,
+	// non-interactive element (no a11y lint, no suppression). A click that
+	// ends a text selection is left alone so output stays selectable.
+	useEffect(() => {
+		const body = bodyRef.current;
+		if (!body) return;
+		const focusInput = () => {
+			if (window.getSelection()?.toString()) return;
+			inputRef.current?.focus();
+		};
+		body.addEventListener("click", focusInput);
+		return () => body.removeEventListener("click", focusInput);
+	}, []);
+
 	const submit = () => {
 		const entry = input;
 		const { lines: result, effect } = runCommand(entry, {
