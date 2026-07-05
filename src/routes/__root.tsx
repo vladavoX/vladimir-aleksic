@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useState } from "react";
+import { Footer } from "#/components/footer";
 import { Header } from "#/components/header";
 import { Main } from "#/components/main";
 import { SidebarLeft } from "#/components/sidebar-left";
@@ -63,9 +64,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					{/* <aside className="[grid-area:rSidebar] p-4 border-l border-divider">
 						Right Sidebar Content
 					</aside> */}
-					<footer className="[grid-area:footer] px-4 py-2 border-t border-divider bg-black">
-						Footer Content
-					</footer>
+					<Footer />
 				</div>
 				<TanStackDevtools
 					config={{
