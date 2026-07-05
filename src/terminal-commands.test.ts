@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { type CommandContext, runCommand } from "#/terminal-commands";
+import {
+	type CommandContext,
+	completeInput,
+	runCommand,
+} from "#/terminal-commands";
 import { formatDate } from "#/utils";
 
 const files = [
@@ -91,5 +95,64 @@ describe("runCommand", () => {
 		const result = runCommand("banana", ctx);
 		expect(result.lines[0].kind).toBe("error");
 		expect(result.lines[0].text).toContain("command not found");
+	});
+});
+
+describe("completeInput", () => {
+	it("completes a unique command prefix and adds a trailing space", () => {
+		expect(completeInput("he", files)).toEqual({
+			value: "help ",
+			suggestions: [],
+		});
+		expect(completeInput("wh", files)).toEqual({
+			value: "whoami ",
+			suggestions: [],
+		});
+	});
+
+	it("advances an ambiguous command to the common prefix and lists matches", () => {
+		expect(completeInput("c", files)).toEqual({
+			value: "c",
+			suggestions: ["cd", "clear"],
+		});
+	});
+
+	it("leaves the input unchanged when nothing matches", () => {
+		expect(completeInput("zzz", files)).toEqual({
+			value: "zzz",
+			suggestions: [],
+		});
+	});
+
+	it("completes a unique file argument for cd/open", () => {
+		expect(completeInput("cd exp", files)).toEqual({
+			value: "cd experience.log",
+			suggestions: [],
+		});
+		expect(completeInput("open sk", files)).toEqual({
+			value: "open skills.json",
+			suggestions: [],
+		});
+	});
+
+	it("lists file matches for an empty cd argument", () => {
+		expect(completeInput("cd ", files)).toEqual({
+			value: "cd ",
+			suggestions: ["README.md", "skills.json", "experience.log"],
+		});
+	});
+
+	it("does not complete arguments for non-navigation commands", () => {
+		expect(completeInput("echo he", files)).toEqual({
+			value: "echo he",
+			suggestions: [],
+		});
+	});
+
+	it("preserves the alias used (cd vs open) when completing the file", () => {
+		expect(completeInput("cd RE", files)).toEqual({
+			value: "cd README.md",
+			suggestions: [],
+		});
 	});
 });

@@ -2,7 +2,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { files } from "#/files";
-import { type OutputLine, runCommand } from "#/terminal-commands";
+import {
+	completeInput,
+	type OutputLine,
+	runCommand,
+} from "#/terminal-commands";
 
 const WHOAMI = "Vladimir Aleksic — Full-Stack Developer · Novi Sad, RS";
 const PROMPT = "~/portfolio $";
@@ -73,6 +77,19 @@ export function Terminal() {
 		if (event.key === "Enter") {
 			event.preventDefault();
 			submit();
+			return;
+		}
+		if (event.key === "Tab") {
+			event.preventDefault();
+			const { value, suggestions } = completeInput(input, files);
+			setInput(value);
+			if (suggestions.length > 1) {
+				const line: OutputLine = {
+					kind: "output",
+					text: suggestions.join("  "),
+				};
+				setLines((prev) => [...prev, { ...line, id: idRef.current++ }]);
+			}
 			return;
 		}
 		if (event.key === "ArrowUp") {

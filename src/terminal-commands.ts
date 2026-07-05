@@ -38,6 +38,8 @@ const COMMANDS: { name: string; description: string }[] = [
 	{ name: "theme", description: "show the color theme" },
 ];
 
+const COMMAND_NAMES = COMMANDS.map((command) => command.name);
+
 function resolveRoute(arg: string, files: CommandFile[]): string | undefined {
 	const query = arg.trim().toLowerCase();
 	for (const file of files) {
@@ -96,4 +98,65 @@ export function runCommand(input: string, ctx: CommandContext): CommandResult {
 		default:
 			return { lines: [err(`command not found: ${cmd} — type 'help'`)] };
 	}
+}
+
+export interface Completion {
+	/** The input value after applying the completion. */
+	value: string;
+	/** Candidates to display when the token is ambiguous (length > 1). */
+	suggestions: string[];
+}
+
+function longestCommonPrefix(items: string[]): string {
+	if (items.length === 0) return "";
+	let prefix = items[0];
+	for (const item of items) {
+		while (!item.startsWith(prefix)) {
+			prefix = prefix.slice(0, -1);
+			if (prefix === "") return "";
+		}
+	}
+	return prefix;
+}
+
+// Complete `token` against `candidates`, keeping `before` (everything left of
+// the token, e.g. leading whitespace or "cd ") intact. On a single match, the
+// completion is committed and `suffix` (a trailing space for commands) is
+// appended; on several, the input advances to their common prefix and the
+// matches are returned for display.
+function completeToken(
+	before: string,
+	token: string,
+	candidates: string[],
+	suffix: string,
+): Completion {
+	const matches = candidates.filter((candidate) => candidate.startsWith(token));
+	if (matches.length === 0) return { value: before + token, suggestions: [] };
+	if (matches.length === 1) {
+		return { value: before + matches[0] + suffix, suggestions: [] };
+	}
+	const common = longestCommonPrefix(matches);
+	const completed = common.length > token.length ? common : token;
+	return { value: before + completed, suggestions: matches };
+}
+
+// Tab-completion for the terminal input, assuming the cursor is at the end.
+// Completes the command name while typing the first word, or a file name as
+// the argument to `cd`/`open`.
+export function completeInput(input: string, files: CommandFile[]): Completion {
+	const leading = input.match(/^\s*/)?.[0] ?? "";
+	const rest = input.slice(leading.length);
+
+	if (!/\s/.test(rest)) {
+		return completeToken(leading, rest, COMMAND_NAMES, " ");
+	}
+
+	const parts = rest.match(/^(\S+)(\s+)(.*)$/);
+	if (!parts) return { value: input, suggestions: [] };
+	const [, cmd, gap, arg] = parts;
+	if ((cmd === "cd" || cmd === "open") && !/\s/.test(arg)) {
+		const names = files.map((file) => file.name);
+		return completeToken(leading + cmd + gap, arg, names, "");
+	}
+	return { value: input, suggestions: [] };
 }
