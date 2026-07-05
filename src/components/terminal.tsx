@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { files } from "#/files";
 import { type OutputLine, runCommand } from "#/terminal-commands";
 
@@ -30,14 +30,18 @@ export function Terminal() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const bodyRef = useRef<HTMLDivElement>(null);
 
-	const scrollToBottom = () => {
+	const scrollToBottom = useCallback(() => {
 		const body = bodyRef.current;
 		if (body) body.scrollTop = body.scrollHeight;
-	};
+	}, []);
 
+	// `lines`/`open` are re-render triggers rather than values read here, so
+	// they are referenced explicitly to satisfy the exhaustive-deps rule.
 	useEffect(() => {
+		void lines;
+		void open;
 		scrollToBottom();
-	});
+	}, [lines, open, scrollToBottom]);
 
 	const submit = () => {
 		const entry = input;
@@ -97,16 +101,14 @@ export function Terminal() {
 	};
 
 	const toggle = () => {
-		setOpen((value) => {
-			const next = !value;
-			if (next) {
-				requestAnimationFrame(() => {
-					inputRef.current?.focus();
-					scrollToBottom();
-				});
-			}
-			return next;
-		});
+		const next = !open;
+		setOpen(next);
+		if (next) {
+			requestAnimationFrame(() => {
+				inputRef.current?.focus();
+				scrollToBottom();
+			});
+		}
 	};
 
 	return (
@@ -114,6 +116,7 @@ export function Terminal() {
 			<button
 				type="button"
 				onClick={toggle}
+				aria-expanded={open}
 				className="flex w-full items-center gap-1.5 px-4 py-2 text-accent"
 			>
 				{open ? (
