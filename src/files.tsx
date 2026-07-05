@@ -1,8 +1,7 @@
-import { Braces, Logs, Type } from "lucide-react";
+import { Braces, Logs } from "lucide-react";
 
 export const files = [
 	{ icon: "M", name: "README.md", to: "/" },
-	{ icon: <Type className="size-3.5" />, name: "now.txt", to: "/now" },
 	{ icon: <Braces className="size-3.5" />, name: "skills.json", to: "/skills" },
 	{
 		icon: <Logs className="size-3.5" />,

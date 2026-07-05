@@ -10,18 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SkillsRouteRouteImport } from './routes/skills/route'
-import { Route as NowRouteRouteImport } from './routes/now/route'
 import { Route as ExperienceRouteRouteImport } from './routes/experience/route'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SkillsRouteRoute = SkillsRouteRouteImport.update({
   id: '/skills',
   path: '/skills',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NowRouteRoute = NowRouteRouteImport.update({
-  id: '/now',
-  path: '/now',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExperienceRouteRoute = ExperienceRouteRouteImport.update({
@@ -38,34 +32,30 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/experience': typeof ExperienceRouteRoute
-  '/now': typeof NowRouteRoute
   '/skills': typeof SkillsRouteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/experience': typeof ExperienceRouteRoute
-  '/now': typeof NowRouteRoute
   '/skills': typeof SkillsRouteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/experience': typeof ExperienceRouteRoute
-  '/now': typeof NowRouteRoute
   '/skills': typeof SkillsRouteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/experience' | '/now' | '/skills'
+  fullPaths: '/' | '/experience' | '/skills'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/experience' | '/now' | '/skills'
-  id: '__root__' | '/' | '/experience' | '/now' | '/skills'
+  to: '/' | '/experience' | '/skills'
+  id: '__root__' | '/' | '/experience' | '/skills'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExperienceRouteRoute: typeof ExperienceRouteRoute
-  NowRouteRoute: typeof NowRouteRoute
   SkillsRouteRoute: typeof SkillsRouteRoute
 }
 
@@ -76,13 +66,6 @@ declare module '@tanstack/react-router' {
       path: '/skills'
       fullPath: '/skills'
       preLoaderRoute: typeof SkillsRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/now': {
-      id: '/now'
-      path: '/now'
-      fullPath: '/now'
-      preLoaderRoute: typeof NowRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/experience': {
@@ -105,7 +88,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExperienceRouteRoute: ExperienceRouteRoute,
-  NowRouteRoute: NowRouteRoute,
   SkillsRouteRoute: SkillsRouteRoute,
 }
 export const routeTree = rootRouteImport
