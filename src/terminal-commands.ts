@@ -1,7 +1,7 @@
 import { formatDate } from "#/utils";
 
 export type OutputLine = {
-	kind: "input" | "output" | "error";
+	kind: "input" | "output" | "error" | "success" | "file" | "help";
 	text: string;
 };
 
@@ -25,6 +25,8 @@ export interface CommandResult {
 
 const out = (text: string): OutputLine => ({ kind: "output", text });
 const err = (text: string): OutputLine => ({ kind: "error", text });
+const ok = (text: string): OutputLine => ({ kind: "success", text });
+const file = (text: string): OutputLine => ({ kind: "file", text });
 
 const COMMANDS: { name: string; description: string }[] = [
 	{ name: "help", description: "list available commands" },
@@ -64,13 +66,20 @@ export function runCommand(input: string, ctx: CommandContext): CommandResult {
 
 	switch (cmd) {
 		case "help":
+			// A single "help" line whose text is tab/newline-delimited rows
+			// (name<TAB>description); the component lays it out as a grid.
 			return {
-				lines: COMMANDS.map((command) =>
-					out(`${command.name.padEnd(8)} ${command.description}`),
-				),
+				lines: [
+					{
+						kind: "help",
+						text: COMMANDS.map(
+							(command) => `${command.name}\t${command.description}`,
+						).join("\n"),
+					},
+				],
 			};
 		case "ls":
-			return { lines: ctx.files.map((file) => out(file.name)) };
+			return { lines: ctx.files.map((entry) => file(entry.name)) };
 		case "cd":
 		case "open": {
 			if (arg === "") {
@@ -81,7 +90,7 @@ export function runCommand(input: string, ctx: CommandContext): CommandResult {
 				return { lines: [err(`${cmd}: no such file: ${arg}`)] };
 			}
 			return {
-				lines: [out(`opening ${arg}…`)],
+				lines: [ok(`opening ${arg}…`)],
 				effect: { type: "navigate", to },
 			};
 		}

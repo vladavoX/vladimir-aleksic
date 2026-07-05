@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { files } from "#/files";
 import {
 	completeInput,
@@ -19,6 +19,8 @@ const WELCOME: Entry[] = [
 
 const lineClass = (kind: OutputLine["kind"]) => {
 	if (kind === "error") return "text-prompt";
+	if (kind === "success") return "text-accent";
+	if (kind === "file") return "text-host";
 	if (kind === "input") return "text-subtle";
 	return "text-white/70";
 };
@@ -73,7 +75,7 @@ export function Terminal() {
 		if (effect?.type === "clear") {
 			setLines([]);
 		} else {
-			const echo: OutputLine = { kind: "input", text: `${PROMPT} ${entry}` };
+			const echo: OutputLine = { kind: "input", text: entry };
 			const appended = [echo, ...result].map((line) => ({
 				...line,
 				id: idRef.current++,
@@ -164,11 +166,38 @@ export function Terminal() {
 				className="h-0 overflow-hidden transition-[height] duration-200 data-open:h-48"
 			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
-					{lines.map((line) => (
-						<p key={line.id} className={lineClass(line.kind)}>
-							{line.text || " "}
-						</p>
-					))}
+					{lines.map((line) => {
+						if (line.kind === "help") {
+							return (
+								<div
+									key={line.id}
+									className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 py-1"
+								>
+									{line.text.split("\n").map((row) => {
+										const [name, description] = row.split("\t");
+										return (
+											<Fragment key={name}>
+												<span className="text-accent">{name}</span>
+												<span className="text-muted">{description}</span>
+											</Fragment>
+										);
+									})}
+								</div>
+							);
+						}
+						if (line.kind === "input") {
+							return (
+								<p key={line.id} className="text-subtle">
+									<span className="text-accent">{PROMPT}</span> {line.text}
+								</p>
+							);
+						}
+						return (
+							<p key={line.id} className={lineClass(line.kind)}>
+								{line.text || " "}
+							</p>
+						);
+					})}
 					<div className="flex items-center gap-2">
 						<span className="shrink-0 text-accent">{PROMPT}</span>
 						<input
