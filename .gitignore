@@ -9,5 +9,6 @@ dist-ssr
 .wrangler
 .output
 .vinxi
+.playwright-mcp
 __unconfig*
 todos.json

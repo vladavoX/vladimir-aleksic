@@ -6,26 +6,38 @@ import {
 	useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Footer } from "#/components/footer";
 import { Header } from "#/components/header";
 import { Main } from "#/components/main";
 import { SidebarLeft } from "#/components/sidebar-left";
+import { files } from "#/files";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
 	head: () => ({
 		meta: [
+			{ charSet: "utf-8" },
+			{ name: "viewport", content: "width=device-width, initial-scale=1" },
+			{ title: "Vladimir Aleksic — Full-Stack Developer" },
 			{
-				charSet: "utf-8",
+				name: "description",
+				content:
+					"Full-stack developer at Plainly, building Plainly Videos and Plainly Flows with TypeScript, React, TanStack, and Node. Based in Novi Sad, Serbia — open to work.",
+			},
+			{ name: "color-scheme", content: "dark" },
+			{ name: "theme-color", content: "#000000" },
+			{ property: "og:type", content: "website" },
+			{
+				property: "og:title",
+				content: "Vladimir Aleksic — Full-Stack Developer",
 			},
 			{
-				name: "viewport",
-				content: "width=device-width, initial-scale=1",
+				property: "og:description",
+				content:
+					"Full-stack developer at Plainly. TypeScript, React, TanStack, and Node. Based in Novi Sad, Serbia.",
 			},
-			{
-				title: "TanStack Start Starter",
-			},
+			{ name: "twitter:card", content: "summary" },
 		],
 		links: [
 			{
@@ -43,6 +55,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		new Set([pathname]),
 	);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+	// Any navigation to a known file route opens its tab — single source of
+	// truth for terminal `cd`/`open`, direct URLs, and back/forward alike.
+	useEffect(() => {
+		if (!files.some((file) => file.to === pathname)) return;
+		setActiveTabs((prev) =>
+			prev.has(pathname) ? prev : new Set(prev).add(pathname),
+		);
+	}, [pathname]);
 
 	return (
 		<html lang="en">
@@ -66,17 +87,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					</aside> */}
 					<Footer />
 				</div>
-				<TanStackDevtools
-					config={{
-						position: "bottom-right",
-					}}
-					plugins={[
-						{
-							name: "Tanstack Router",
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-					]}
-				/>
+				{import.meta.env.DEV && (
+					<TanStackDevtools
+						config={{
+							position: "bottom-right",
+						}}
+						plugins={[
+							{
+								name: "Tanstack Router",
+								render: <TanStackRouterDevtoolsPanel />,
+							},
+						]}
+					/>
+				)}
 				<Scripts />
 			</body>
 		</html>

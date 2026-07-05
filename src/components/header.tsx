@@ -1,9 +1,9 @@
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
 	return (
 		<header className="[grid-area:header] md:px-4 h-8.25 md:h-auto justify-between flex items-center border-b border-divider">
-			<div className="flex md:hidden items-center justify-between w-full">
+			<div className="flex md:hidden items-center w-full">
 				<button
 					type="button"
 					onClick={onMenuClick}
@@ -11,13 +11,6 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
 				>
 					<span className="sr-only">Open menu</span>
 					<Menu className="size-4 shrink-0" />
-				</button>
-				<button
-					type="button"
-					className="text-white/70 cursor-pointer px-4 py-2 active:bg-accent/10"
-				>
-					<span className="sr-only">Search</span>
-					<Search className="size-4 shrink-0" />
 				</button>
 			</div>
 			<div className="hidden md:flex items-center">
