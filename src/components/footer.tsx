@@ -37,7 +37,7 @@ export function Footer() {
 	const now = useLocalClock();
 
 	const file = fileName(pathname);
-	const cwd = pathname === "/" || !file ? "~/portfolio" : `~/portfolio/${file}`;
+	const cwd = file ? `~/portfolio/${file}` : "~/portfolio";
 
 	return (
 		<footer className="[grid-area:footer] flex h-8.25 items-stretch justify-between overflow-hidden border-t border-divider bg-black text-xs">
