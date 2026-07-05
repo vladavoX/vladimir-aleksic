@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { XIcon } from "lucide-react";
+import { Terminal } from "#/components/terminal";
 import { fileName } from "#/files";
 
 export function Main({
@@ -75,6 +76,7 @@ export function Main({
 			<div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
 				{children}
 			</div>
+			<Terminal />
 		</div>
 	);
 }
