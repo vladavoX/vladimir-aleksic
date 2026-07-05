@@ -8,8 +8,8 @@ const yearsShipping = new Date().getFullYear() - SHIPPING_SINCE;
 const stats = [
 	{
 		label: "CONTRIBUTIONS / YR",
-		value: "1900+",
-		valueSuffix: "/ 2026",
+		value: "2100+",
+		valueSuffix: "/ past year",
 		caption: "commits · PRs · reviews",
 	},
 	{
@@ -40,15 +40,15 @@ const chips = [
 ];
 
 const paragraphs = [
-	"Lorem ipsum, dolor sit amet consectetur adipisicing elit. Asperiores pariatur labore quam nisi nobis earum numquam ipsam voluptates, delectus laudantium quibusdam doloribus cumque facere odit dolor consequatur similique, molestias et.",
-	"Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, quod quis vitae quae beatae natus tenetur repellendus excepturi est accusamus delectus accusantium eligendi voluptatum, aut officia, maiores eveniet magni et.",
-	"Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque voluptas labore aut facilis ratione debitis quae ullam suscipit ad quo atque, unde magni, optio accusamus, quasi in laboriosam a modi.",
+	"I'm a full-stack developer at Plainly, where I build Plainly Videos — a video automation platform that turns Adobe After Effects templates and your data into rendered videos at scale — and help shape Plainly Flows, the product we're launching next. Day to day that's TypeScript across the frontend, Node services, and end-to-end tests, with some Java and Spring Boot on the backend.",
+	"I've been shipping production software since 2022. I started with an internship at Levi9, spent a year at Positive Tech delivering client projects across the stack, and have been at Plainly since late 2023. Along the way I maintain our open source — the Adobe ↔ Plainly After Effects plugin and the public REST API examples.",
+	"I care about clean, well-tested code and tools that get out of the way. React, TanStack, and Node are my daily drivers. Based in Novi Sad, Serbia — open to new work.",
 ];
 
 const quickStats = [
 	{
 		label: "STACK",
-		value: "TypeScript · React · Node",
+		value: "TypeScript · React · Next.js",
 	},
 	{
 		label: "EDITOR",
@@ -60,7 +60,7 @@ const quickStats = [
 	},
 	{
 		label: "OFF-KEYBOARD",
-		value: "Gaming",
+		value: "Gaming, Motorcycling",
 	},
 ];
 
@@ -88,7 +88,7 @@ function Home() {
 			</div>
 			<div className="space-y-2">
 				{paragraphs.map((text) => (
-					<p key={text.slice(0, 24)} className="text-sm xl:max-w-2/3">
+					<p key={text} className="text-sm xl:max-w-2/3">
 						{text}
 					</p>
 				))}
