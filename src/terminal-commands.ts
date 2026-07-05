@@ -44,14 +44,14 @@ const COMMAND_NAMES = COMMANDS.map((command) => command.name);
 
 function resolveRoute(arg: string, files: CommandFile[]): string | undefined {
 	const query = arg.trim().toLowerCase();
-	for (const file of files) {
-		const bare = file.to.replace(/^\//, "").toLowerCase();
+	for (const entry of files) {
+		const bare = entry.to.replace(/^\//, "").toLowerCase();
 		if (
-			query === file.name.toLowerCase() ||
-			query === file.to.toLowerCase() ||
+			query === entry.name.toLowerCase() ||
+			query === entry.to.toLowerCase() ||
 			query === bare
 		) {
-			return file.to;
+			return entry.to;
 		}
 	}
 	return undefined;
@@ -164,7 +164,7 @@ export function completeInput(input: string, files: CommandFile[]): Completion {
 	if (!parts) return { value: input, suggestions: [] };
 	const [, cmd, gap, arg] = parts;
 	if ((cmd === "cd" || cmd === "open") && !/\s/.test(arg)) {
-		const names = files.map((file) => file.name);
+		const names = files.map((entry) => entry.name);
 		return completeToken(leading + cmd + gap, arg, names, "");
 	}
 	return { value: input, suggestions: [] };
