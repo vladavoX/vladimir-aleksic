@@ -126,7 +126,11 @@ export function Terminal() {
 				)}
 				TERMINAL
 			</button>
-			{open && (
+			<div
+				data-open={open || undefined}
+				inert={!open}
+				className="h-0 overflow-hidden transition-[height] duration-200 data-open:h-48"
+			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
 					{lines.map((line) => (
 						<p key={line.id} className={lineClass(line.kind)}>
@@ -147,7 +151,7 @@ export function Terminal() {
 						/>
 					</div>
 				</div>
-			)}
+			</div>
 		</div>
 	);
 }
