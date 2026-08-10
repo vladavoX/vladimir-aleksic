@@ -5,9 +5,13 @@ import { fileName } from "#/files";
 
 const FONT = "JetBrains Mono";
 
-const CI_RUNS_URL = "https://github.com/vladavoX/vladimir-aleksic/actions";
-const CI_API_URL =
-	"https://api.github.com/repos/vladavoX/vladimir-aleksic/actions/workflows/ci.yml/runs?branch=master&status=completed&per_page=1";
+// Both URLs track the branch this bundle was built from — the same value the
+// branch cell two positions to the left shows. Pinning them to `master` would
+// make a preview deploy report a verdict about code it is not running.
+// Encoded because branch names may contain `/`, `#` and `?`.
+const CI_BRANCH = encodeURIComponent(__GIT_BRANCH__);
+const CI_RUNS_URL = `https://github.com/vladavoX/vladimir-aleksic/actions/workflows/ci.yml?query=branch%3A${CI_BRANCH}`;
+const CI_API_URL = `https://api.github.com/repos/vladavoX/vladimir-aleksic/actions/workflows/ci.yml/runs?branch=${CI_BRANCH}&status=completed&per_page=1`;
 
 type CiStatus = "unknown" | "passing" | "failing";
 

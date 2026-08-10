@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Kbd, KbdGroup } from "#/components/ui/kbd";
 import { CONTACT } from "#/data/contact";
@@ -47,7 +47,12 @@ const lineClass = (kind: OutputLine["kind"]) => {
 
 export function Terminal() {
 	const navigate = useNavigate();
-	const [open, setOpen] = useState(true);
+	// `null` until the mount effect has consulted the viewport. The server
+	// cannot know the viewport, so the first paint is sized by a media query
+	// (see `data-undecided` below) and JS takes over from there. Committing to
+	// `true` instead would ship the panel open, and phones would paint 12rem of
+	// terminal only to animate it shut — a layout shift on every mobile load.
+	const [open, setOpen] = useState<boolean | null>(null);
 	const [input, setInput] = useState("");
 	const [lines, setLines] = useState<Entry[]>(WELCOME);
 	const [history, setHistory] = useState<string[]>([]);
@@ -57,14 +62,12 @@ export function Terminal() {
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
-	// Open stays the initial state so the server markup and the first client
-	// render agree; the collapse happens after mount, where `matchMedia` exists.
 	// 12rem of terminal is most of a phone viewport, so phones start collapsed.
-	// Negated `min-width` rather than `max-width` so the cutoff is the exact
-	// complement of Tailwind's `sm:` — a `max-width: 640px` query would also
-	// match at exactly 640px, where the layout is already in `sm` mode.
+	// `min-width` rather than `max-width` so the cutoff is the exact complement
+	// of the `sm:` classes below — a `max-width: 640px` query would also match
+	// at exactly 640px, where the layout is already in `sm` mode.
 	useEffect(() => {
-		if (!window.matchMedia("(min-width: 40rem)").matches) setOpen(false);
+		setOpen(window.matchMedia("(min-width: 40rem)").matches);
 	}, []);
 
 	const scrollToBottom = useCallback(() => {
@@ -229,20 +232,29 @@ export function Terminal() {
 		return () => window.removeEventListener("keydown", onWindowKeyDown);
 	}, [open, toggleOpen, clearTerminal]);
 
+	// Both flags sit on the wrapper so the chevron and the panel are driven from
+	// one place: `data-open` once JS has decided, `data-undecided` + `sm:` for
+	// the server-rendered first paint.
 	return (
-		<div className="shrink-0 border-t border-divider bg-black text-xs">
+		<div
+			data-open={open || undefined}
+			data-undecided={open === null || undefined}
+			className="group shrink-0 border-t border-divider bg-black text-xs"
+		>
 			<button
 				ref={toggleButtonRef}
 				type="button"
 				onClick={toggleOpen}
-				aria-expanded={open}
+				// Omitted rather than guessed while undecided: the button is inert
+				// until hydration anyway, and a wrong value would be a lie about
+				// state to a screen reader.
+				aria-expanded={open ?? undefined}
 				className="flex w-full items-center gap-1.5 px-4 py-2 text-accent"
 			>
-				{open ? (
-					<ChevronDown className="size-3" />
-				) : (
-					<ChevronRight className="size-3" />
-				)}
+				{/* Rotated rather than swapped for `ChevronDown` — the two glyphs are
+				    the same path 90° apart, and one element is something CSS alone can
+				    point the right way before JS has decided. */}
+				<ChevronRight className="size-3 group-data-open:rotate-90 group-data-undecided:sm:rotate-90" />
 				TERMINAL
 				{/* Hidden on narrow screens, where the hint is noise next to the label.
 				    Spelled `Ctrl` rather than U+2303, which the latin font subset the
@@ -260,10 +272,13 @@ export function Terminal() {
 					</Kbd>
 				</KbdGroup>
 			</button>
+			{/* `transition-none` while undecided so the handover from the media
+			    query to `data-open` cannot animate. The two agree on height at
+			    every width, so there is nothing to animate — this makes that a
+			    guarantee rather than an argument. */}
 			<div
-				data-open={open || undefined}
-				inert={!open}
-				className="h-0 overflow-hidden transition-[height] duration-200 data-open:h-48"
+				inert={open === false}
+				className="h-0 overflow-hidden transition-[height] duration-200 group-data-open:h-48 group-data-undecided:transition-none group-data-undecided:sm:h-48"
 			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
 					{lines.map((line) => {
