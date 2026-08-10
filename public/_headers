@@ -1,0 +1,8 @@
+# Cloudflare Workers assets headers. Only static-asset responses come through
+# here — the SSR document is rendered by the Worker, and gets the same four
+# headers from the root route's `headers()` in src/routes/__root.tsx.
+/*
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
