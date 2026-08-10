@@ -58,7 +58,6 @@
   }
   .ruled{border-right:1px solid var(--divider)}
   .ruled-left{border-left:1px solid var(--divider)}
-  .ok{color:var(--accent)}
 
   /* ---------- card body ---------- */
   main{
@@ -135,11 +134,13 @@
     </div>
   </main>
 
+  <!-- Nothing in this strip may depend on state the PNG cannot know. It is
+       generated once and committed, so a CI verdict or a branch name baked in
+       here would be a claim no later run could correct. -->
   <div class="bar bottom">
     <div>
       <span class="mode">NORMAL</span>
       <span class="ruled">~/portfolio</span>
-      <span class="ruled ok">CI passing</span>
     </div>
     <div><span class="ruled-left">github.com/vladavoX</span></div>
   </div>
