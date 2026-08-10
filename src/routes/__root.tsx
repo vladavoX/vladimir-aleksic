@@ -13,27 +13,13 @@ import { Header } from "#/components/header";
 import { Main } from "#/components/main";
 import { SidebarLeft } from "#/components/sidebar-left";
 import { files } from "#/files";
+import { SECURITY_HEADERS } from "#/security-headers";
 import { parseTabs, serializeTabs, TABS_STORAGE_KEY } from "#/tabs";
 import appCss from "../styles.css?url";
 
 // Scrapers only follow absolute image URLs, so the card image is emitted only
 // when the deploy origin is known (set VITE_SITE_URL at build time).
 const siteUrl = import.meta.env.VITE_SITE_URL?.replace(/\/$/, "");
-
-// Baseline security headers for every SSR document: the Worker renders those
-// itself, so a `_headers` file cannot reach them — but the root route's headers
-// are merged into every rendered response. Static assets are served by the
-// Cloudflare assets binding and are covered by `public/_headers`, which repeats
-// these four verbatim.
-//
-// No Content-Security-Policy on purpose: Start injects inline scripts, so an
-// enforcing policy needs nonce plumbing, which is its own piece of work.
-const SECURITY_HEADERS = {
-	"Referrer-Policy": "strict-origin-when-cross-origin",
-	"X-Content-Type-Options": "nosniff",
-	"X-Frame-Options": "DENY",
-	"Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-};
 
 export const Route = createRootRoute({
 	headers: () => SECURITY_HEADERS,

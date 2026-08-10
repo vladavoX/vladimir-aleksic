@@ -54,10 +54,11 @@ or local git — see `gitBranch()` in `vite.config.ts`.
 
 Two surfaces, so two places. Static assets are served by Cloudflare's assets
 binding before the Worker runs — `public/_headers` covers those. SSR documents
-are rendered by the Worker, so they get the same headers from the root route's
-`headers()` in `src/routes/__root.tsx`. Keep the two lists in step. There is no
-Content-Security-Policy yet: Start injects inline scripts, so an enforcing
-policy needs nonce plumbing first.
+are rendered by the Worker, so they get the same headers from
+`src/security-headers.ts`, returned by the root route's `headers()` in
+`src/routes/__root.tsx`. `src/security-headers.test.ts` parses `public/_headers`
+and fails if the two lists drift apart. There is no Content-Security-Policy yet:
+Start injects inline scripts, so an enforcing policy needs nonce plumbing first.
 
 ### `VITE_SITE_URL`
 

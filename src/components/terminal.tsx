@@ -6,6 +6,7 @@ import { CONTACT } from "#/data/contact";
 import { files } from "#/files";
 import { matchShortcut } from "#/keybindings";
 import {
+	CWD,
 	completeInput,
 	type OutputLine,
 	runCommand,
@@ -13,7 +14,7 @@ import {
 
 const WHOAMI =
 	"Vladimir Aleksic — Full-Stack Engineer, frontend-focused · Novi Sad, RS";
-const PROMPT = "~/portfolio $";
+const PROMPT = `${CWD} $`;
 
 type Entry = OutputLine & { id: number };
 
@@ -59,8 +60,11 @@ export function Terminal() {
 	// Open stays the initial state so the server markup and the first client
 	// render agree; the collapse happens after mount, where `matchMedia` exists.
 	// 12rem of terminal is most of a phone viewport, so phones start collapsed.
+	// Negated `min-width` rather than `max-width` so the cutoff is the exact
+	// complement of Tailwind's `sm:` — a `max-width: 640px` query would also
+	// match at exactly 640px, where the layout is already in `sm` mode.
 	useEffect(() => {
-		if (window.matchMedia("(max-width: 640px)").matches) setOpen(false);
+		if (!window.matchMedia("(min-width: 40rem)").matches) setOpen(false);
 	}, []);
 
 	const scrollToBottom = useCallback(() => {

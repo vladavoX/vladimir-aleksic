@@ -35,9 +35,9 @@ export interface CommandResult {
 	effect?: Effect;
 }
 
-// Kept in step with the terminal's PROMPT and the footer's cwd cell — one
-// fictional shell, one working directory.
-const CWD = "~/portfolio";
+// The one working directory of this fictional shell. The terminal builds its
+// prompt from this, so `pwd` and the prompt cannot drift apart.
+export const CWD = "~/portfolio";
 const CV_URL = "/cv.pdf";
 
 const out = (text: string): OutputLine => ({ kind: "output", text });
