@@ -70,8 +70,22 @@ Everything editable lives in data modules, not in JSX:
   in tab handling, in `ls`, and in `cd`/`open` autocomplete.
 - `src/routes/experience/route.tsx` — the timeline array.
 
-The CV row on `/contact` links to `/cv.pdf`; drop the PDF at `public/cv.pdf` (or
-remove that entry from `src/data/contact.ts`).
+## CV
+
+`public/cv.html` is the CV source — a single self-contained A4 page, print styles
+included. `public/cv.pdf` is generated from it, and is what the CV row on
+`/contact` links to. Edit the HTML, then regenerate:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=6000 \
+  --print-to-pdf=public/cv.pdf \
+  "file://$PWD/public/cv.html"
+```
+
+Any headless Chromium works; `Cmd-P → Save as PDF` from the browser also does,
+with margins set to none. Both files are served, so `/cv.html` is a readable web
+version if you ever want to link that instead.
 
 ## Terminal
 
