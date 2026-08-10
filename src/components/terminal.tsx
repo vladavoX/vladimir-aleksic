@@ -20,6 +20,15 @@ const WELCOME: Entry[] = [
 	{ id: 0, kind: "output", text: "type 'help' to get started" },
 ];
 
+// Every input to the command engine is a module constant, so the context is
+// built once and shared by the typed-command and shortcut paths.
+const COMMAND_CONTEXT = {
+	files,
+	now: () => new Date(),
+	whoami: WHOAMI,
+	contact: CONTACT,
+};
+
 // Two-column line kinds and the classes for their left/right column.
 const gridClasses: Partial<Record<OutputLine["kind"], [string, string]>> = {
 	help: ["text-accent", "text-muted"],
@@ -76,12 +85,7 @@ export function Terminal() {
 
 	const submit = () => {
 		const entry = input;
-		const { lines: result, effect } = runCommand(entry, {
-			files,
-			now: () => new Date(),
-			whoami: WHOAMI,
-			contact: CONTACT,
-		});
+		const { lines: result, effect } = runCommand(entry, COMMAND_CONTEXT);
 
 		if (effect?.type === "clear") {
 			setLines([]);
@@ -159,8 +163,9 @@ export function Terminal() {
 				scrollToBottom();
 			});
 		} else if (bodyRef.current?.contains(document.activeElement)) {
-			// Same inert-focus trap as Escape below: move focus out before
-			// the panel collapses and becomes `inert`.
+			// Move focus to the toggle button before collapsing: the collapsed
+			// panel is `inert`, and leaving focus inside an inert subtree is
+			// an accessibility trap.
 			toggleButtonRef.current?.focus();
 		}
 	}, [open, scrollToBottom]);
@@ -168,12 +173,7 @@ export function Terminal() {
 	// Routes through the command engine rather than clearing `lines` directly,
 	// so there is one code path for "clear" whether it's typed or shortcut-triggered.
 	const clearTerminal = useCallback(() => {
-		const { effect } = runCommand("clear", {
-			files,
-			now: () => new Date(),
-			whoami: WHOAMI,
-			contact: CONTACT,
-		});
+		const { effect } = runCommand("clear", COMMAND_CONTEXT);
 		if (effect?.type === "clear") setLines([]);
 	}, []);
 
@@ -184,6 +184,9 @@ export function Terminal() {
 
 			if (shortcut === "toggle") {
 				event.preventDefault();
+				// Auto-repeat from a held-down chord would flip the panel dozens
+				// of times a second and yank focus with it; one keypress, one toggle.
+				if (event.repeat) return;
 				toggleOpen();
 				return;
 			}
@@ -193,11 +196,9 @@ export function Terminal() {
 				// panel open, and focus inside it — otherwise leave it alone.
 				if (!open || !bodyRef.current?.contains(document.activeElement)) return;
 				event.preventDefault();
-				// Move focus to the toggle button before collapsing: the
-				// collapsed panel is `inert`, and leaving focus inside an
-				// inert subtree is an accessibility trap.
-				toggleButtonRef.current?.focus();
-				setOpen(false);
+				// `toggleOpen` owns the collapse, including moving focus out of
+				// the subtree that is about to become `inert`.
+				toggleOpen();
 				return;
 			}
 
@@ -226,7 +227,7 @@ export function Terminal() {
 					<ChevronRight className="size-3" />
 				)}
 				TERMINAL
-				{/* Touch devices have no physical keys, so the hint would be noise. */}
+				{/* Hidden on narrow screens, where the hint is noise next to the label. */}
 				<span
 					aria-hidden="true"
 					className="ml-auto hidden text-muted sm:inline"
