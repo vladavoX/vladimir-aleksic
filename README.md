@@ -96,3 +96,9 @@ in `src/components/terminal.tsx` owns history, Tab completion and scrolling.
 
 Commands: `help`, `ls`, `cd` / `open`, `whoami`, `contact`, `echo`, `date`,
 `clear`, `theme`. Tab completes commands and file arguments, ↑/↓ walks history.
+
+`src/keybindings.ts` is the same idea applied to the panel itself: a pure
+`event -> action` mapping, tested without a DOM. Shortcuts, VS Code-style:
+Ctrl+` (control + backtick) or Cmd+J / Ctrl+J toggles the panel open or
+closed; Escape closes it while focus is inside the terminal; Ctrl+L clears it
+while the input is focused.

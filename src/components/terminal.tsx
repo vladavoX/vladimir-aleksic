@@ -3,6 +3,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { CONTACT } from "#/data/contact";
 import { files } from "#/files";
+import { matchShortcut } from "#/keybindings";
 import {
 	completeInput,
 	type OutputLine,
@@ -43,6 +44,7 @@ export function Terminal() {
 	const idRef = useRef(WELCOME.length);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const bodyRef = useRef<HTMLDivElement>(null);
+	const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
 	const scrollToBottom = useCallback(() => {
 		const body = bodyRef.current;
@@ -143,22 +145,79 @@ export function Terminal() {
 		}
 	};
 
-	const toggle = () => {
-		const next = !open;
-		setOpen(next);
-		if (next) {
-			requestAnimationFrame(() => {
-				inputRef.current?.focus();
-				scrollToBottom();
-			});
-		}
-	};
+	// Shared by the header button and the Ctrl+`/Cmd+J shortcut. A functional
+	// update (rather than reading `open` from the closure) keeps this stable
+	// across renders so the keydown listener below doesn't need to re-attach
+	// on every keystroke.
+	const toggleOpen = useCallback(() => {
+		setOpen((prev) => {
+			const next = !prev;
+			if (next) {
+				requestAnimationFrame(() => {
+					inputRef.current?.focus();
+					scrollToBottom();
+				});
+			} else if (bodyRef.current?.contains(document.activeElement)) {
+				// Same inert-focus trap as Escape below: move focus out before
+				// the panel collapses and becomes `inert`.
+				toggleButtonRef.current?.focus();
+			}
+			return next;
+		});
+	}, [scrollToBottom]);
+
+	// Routes through the command engine rather than clearing `lines` directly,
+	// so there is one code path for "clear" whether it's typed or shortcut-triggered.
+	const clearTerminal = useCallback(() => {
+		const { effect } = runCommand("clear", {
+			files,
+			now: () => new Date(),
+			whoami: WHOAMI,
+			contact: CONTACT,
+		});
+		if (effect?.type === "clear") setLines([]);
+	}, []);
+
+	useEffect(() => {
+		const onWindowKeyDown = (event: KeyboardEvent) => {
+			const shortcut = matchShortcut(event);
+			if (!shortcut) return;
+
+			if (shortcut === "toggle") {
+				event.preventDefault();
+				toggleOpen();
+				return;
+			}
+
+			if (shortcut === "close") {
+				// Only steal Escape while it's actually doing something here —
+				// panel open, and focus inside it — otherwise leave it alone.
+				if (!open || !bodyRef.current?.contains(document.activeElement)) return;
+				event.preventDefault();
+				// Move focus to the toggle button before collapsing: the
+				// collapsed panel is `inert`, and leaving focus inside an
+				// inert subtree is an accessibility trap.
+				toggleButtonRef.current?.focus();
+				setOpen(false);
+				return;
+			}
+
+			// "clear" only fires while the terminal input itself has focus.
+			if (document.activeElement !== inputRef.current) return;
+			event.preventDefault();
+			clearTerminal();
+		};
+
+		window.addEventListener("keydown", onWindowKeyDown);
+		return () => window.removeEventListener("keydown", onWindowKeyDown);
+	}, [open, toggleOpen, clearTerminal]);
 
 	return (
 		<div className="shrink-0 border-t border-divider bg-black text-xs">
 			<button
+				ref={toggleButtonRef}
 				type="button"
-				onClick={toggle}
+				onClick={toggleOpen}
 				aria-expanded={open}
 				className="flex w-full items-center gap-1.5 px-4 py-2 text-accent"
 			>
@@ -168,6 +227,13 @@ export function Terminal() {
 					<ChevronRight className="size-3" />
 				)}
 				TERMINAL
+				{/* Touch devices have no physical keys, so the hint would be noise. */}
+				<span
+					aria-hidden="true"
+					className="ml-auto hidden text-muted sm:inline"
+				>
+					⌃`
+				</span>
 			</button>
 			<div
 				data-open={open || undefined}
