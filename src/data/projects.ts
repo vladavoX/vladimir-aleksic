@@ -17,8 +17,8 @@ export const projects: Project[] = [
 		stack: ["TypeScript", "React", "CEP", "ExtendScript", "GitHub Actions"],
 	},
 	{
-		name: "plainly-mcp",
-		href: "https://github.com/plainly-videos",
+		name: "mcp-server",
+		href: "https://github.com/plainly-videos/mcp-server",
 		kind: "maintained",
 		description:
 			"MCP server that lets AI agents drive the render API. I set up its CI and releases, and reworked how it describes render parameters so agents get the call right.",
@@ -39,27 +39,5 @@ export const projects: Project[] = [
 		description:
 			"Hot-reloads host-side JSX in CEP panels, because reopening the panel on every save gets old fast.",
 		stack: ["Node.js", "JavaScript", "ExtendScript"],
-	},
-];
-
-export interface UpstreamFix {
-	repo: string;
-	href: string;
-	summary: string;
-}
-
-// Small patches to dependencies — listed plainly rather than dressed up as
-// projects of their own.
-export const upstream: UpstreamFix[] = [
-	{
-		repo: "shuding/nextra",
-		href: "https://github.com/shuding/nextra/pulls?q=author%3AvladavoX",
-		summary:
-			"Pagefind index options exposed, clearer errors on bad meta fields",
-	},
-	{
-		repo: "filestack/filestack-react",
-		href: "https://github.com/filestack/filestack-react/pull/160",
-		summary: "Fixed package resolution under Vite",
 	},
 ];
