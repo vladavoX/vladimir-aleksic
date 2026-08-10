@@ -31,58 +31,53 @@ const timeline = [
 		company: "Plainly",
 		active: true,
 		context:
-			"Video automation, remote, seven people and three engineers. The platform, Plainly Videos, renders around 300,000 videos a month for API and no-code customers.",
+			"Video automation, remote. Small team — three of us on engineering — and the platform renders somewhere around 300,000 videos a month.",
 		points: [
 			{
-				id: "flows",
-				body: "Built PlainlyFlows 0→1 — a new product dashboard from empty repo to launch in July 2026. Since launch I ship directly against user feedback, deciding the next slice from what people do in the product rather than from a spec.",
+				id: "dashboard",
+				body: "I look after the Plainly Videos dashboard: projects, template parameterization, render queues, billing. React and TypeScript.",
 			},
 			{
-				id: "dashboard",
-				body: "Own the Plainly Videos dashboard — a React and TypeScript app covering projects, template parameterization, render queues and billing, used daily by customers automating video at scale.",
+				id: "flows",
+				body: "Built PlainlyFlows from an empty repo to its launch in July 2026, and I keep shipping it against what people actually do in it.",
 			},
 			{
 				id: "plugin",
 				body: (
 					<>
-						Built the{" "}
-						<Repo name="after-effects-plugin">After Effects plugin</Repo> solo
-						and maintain it in the open — a TypeScript CEP extension that pushes
-						projects straight to Plainly, with outside issues and contributors,
-						issue and PR templates, and signed release builds shipped on tag.
+						The <Repo name="after-effects-plugin">After Effects plugin</Repo> is
+						mine end to end — a CEP extension that pushes projects straight to
+						Plainly, with issues and PRs coming in from outside.
 					</>
 				),
 			},
 			{
 				id: "mcp",
-				body: "Work on the Plainly MCP server, which lets AI agents drive the render API directly — set up its CI and tag-based releases, and reworked how it describes render parameters so agents call it correctly first time.",
+				body: "Work on our MCP server so AI agents can drive the render API — its CI and releases, and how it describes render parameters so agents get the call right.",
 			},
 			{
 				id: "quality",
-				body: "Own the quality gates: Vitest and Playwright / Cypress suites gated in GitHub Actions, lint and format enforced by Biome and oxlint, frozen lockfiles, and continuous dependency security triage across four repos.",
-			},
-			{
-				id: "monorepo",
 				body: (
 					<>
-						Converted the plugin to a Turborepo monorepo and extracted a shared{" "}
-						<Code>plainly-types</Code> package, so types are enforced at the
-						boundary between the plugin, the{" "}
-						<Repo name="examples">REST API examples</Repo> and our API.
+						Most of the testing and tooling setup is mine: Vitest and Playwright
+						/ Cypress in CI, Biome and oxlint, and a shared{" "}
+						<Code>plainly-types</Code> package so the plugin, the{" "}
+						<Repo name="examples">REST API examples</Repo> and our API can't
+						drift apart.
 					</>
 				),
 			},
 			{
 				id: "regression",
-				body: "After a regression in how render parameters are built from user input reached production, I wrote the test suite around that logic — changes near it now fail loudly instead of breaking it quietly.",
+				body: "A render-parameter bug once slipped into production, so I wrote the tests around that logic. It fails loudly now instead of quietly.",
 			},
 			{
 				id: "perf",
 				body: (
 					<>
-						Frontend performance: manual chunk splitting and route-level lazy
-						loading against Vite bundle analysis, plus refactors cutting
-						unnecessary <Code>useEffect</Code> and re-render churn.
+						Ongoing frontend performance work — chunk splitting, lazy routes,
+						and cutting <Code>useEffect</Code> and re-renders that were never
+						needed.
 					</>
 				),
 			},
@@ -124,11 +119,11 @@ const timeline = [
 		points: [
 			{
 				id: "clients",
-				body: "Delivered client projects across the JavaScript and TypeScript stack — mostly React frontends shipped to external clients on their deadlines.",
+				body: "A year of client work in JavaScript and TypeScript — mostly React frontends, always on someone else's deadline.",
 			},
 			{
 				id: "stack",
-				body: "Frontend and backend work with React, React Native and Node, plus WordPress and Shopify builds where the client already lived there.",
+				body: "Frontend and backend both, plus React Native, and WordPress or Shopify when that's where the client already lived.",
 			},
 		],
 		stack: [
