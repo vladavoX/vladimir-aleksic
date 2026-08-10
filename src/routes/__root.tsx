@@ -7,12 +7,13 @@ import {
 	useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Footer } from "#/components/footer";
 import { Header } from "#/components/header";
 import { Main } from "#/components/main";
 import { SidebarLeft } from "#/components/sidebar-left";
 import { files } from "#/files";
+import { parseTabs, serializeTabs, TABS_STORAGE_KEY } from "#/tabs";
 import appCss from "../styles.css?url";
 
 // Scrapers only follow absolute image URLs, so the card image is emitted only
@@ -120,6 +121,55 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			prev.has(pathname) ? prev : new Set(prev).add(pathname),
 		);
 	}, [pathname]);
+
+	// Restore persisted tabs after mount, not in the useState initializer
+	// above: the initializer runs during the first client render too, and
+	// localStorage isn't available on the server, so folding this in there
+	// would make that first client render disagree with the server-rendered
+	// HTML — a hydration mismatch. Running once here means restored tabs pop
+	// in a frame after paint instead, which is the trade-off we accept.
+	//
+	// Intentionally once: this restores whatever was on disk at mount, not
+	// on every pathname change (the effect above already keeps the current
+	// route's tab open on navigation).
+	//
+	// Merged into the existing set rather than replacing it, so the tab the
+	// initializer already sanitized (a real file route, or "/" when the URL
+	// is a 404) survives — appending the raw pathname here would open a
+	// nameless tab for an unknown URL.
+	useEffect(() => {
+		try {
+			const stored = parseTabs(
+				window.localStorage.getItem(TABS_STORAGE_KEY),
+				files.map((file) => file.to),
+			);
+			if (stored.length === 0) return;
+			setActiveTabs((prev) => new Set([...stored, ...prev]));
+		} catch {
+			// Safari private mode (and friends) throws on localStorage.getItem
+			// too, not only on writes — fall back to the URL-only tab silently.
+		}
+	}, []);
+
+	// Persist whenever the tab set changes. The restore effect above is
+	// declared first, so on mount it always runs before this one — but its
+	// setState doesn't apply until the next render, so this effect's own
+	// first run still sees the pre-restore, URL-only state. Skip that one
+	// call: once restore's update (if any) lands, this effect reruns with
+	// the real value and writes it, so storage is never clobbered with a
+	// stale snapshot in between.
+	const isFirstWrite = useRef(true);
+	useEffect(() => {
+		if (isFirstWrite.current) {
+			isFirstWrite.current = false;
+			return;
+		}
+		try {
+			window.localStorage.setItem(TABS_STORAGE_KEY, serializeTabs(activeTabs));
+		} catch {
+			// Storage inaccessible — tabs just won't persist this session.
+		}
+	}, [activeTabs]);
 
 	return (
 		<html lang="en">
