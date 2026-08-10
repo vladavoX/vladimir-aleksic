@@ -258,10 +258,8 @@
         <li><strong>Own the Plainly Videos app dashboard</strong> — a React + TypeScript SPA covering projects, template parameterization, render queues and billing, used daily by customers automating video at scale.</li>
         <li><strong>Built the <a href="https://github.com/plainly-videos/after-effects-plugin">After Effects plugin</a> solo and maintain it in the open</strong> — a TypeScript CEP extension that lets designers push projects straight to Plainly. External issues and contributors, issue and PR templates, signed release builds shipped on tag.</li>
         <li><strong>Work on the Plainly MCP server</strong>, which lets AI agents drive the render API directly — set up its CI and tag-based release pipeline, and reworked how it describes render parameters to agents so they call it correctly first time.</li>
-        <li><strong>Own the quality gates</strong>: Vitest and Playwright/Cypress suites gated in GitHub Actions, lint and format enforced by Biome and oxlint, frozen lockfiles, and continuous security dependency triage across four repos.</li>
-        <li>Converted the plugin to a Turborepo monorepo and extracted a shared <code>plainly-types</code> package, so types are enforced at the boundary between the plugin, the examples, and our API.</li>
-        <li>After a regression in how render parameters are built from user input reached production, I wrote the test suite around that logic — so changes near it fail loudly instead of breaking it silently again.</li>
-        <li>Frontend performance: manual chunk splitting and route-level lazy loading against Vite bundle analysis, plus refactors cutting unnecessary <code>useEffect</code> and re-render churn.</li>
+        <li><strong>Own the quality gates</strong>: Vitest and Playwright/Cypress suites gated in GitHub Actions, lint and format enforced by Biome and oxlint, and types shared across our repos so they can't drift apart.</li>
+        <li>Ongoing frontend performance work — keeping bundles small and pages fast as the products grow.</li>
       </ul>
     </div>
 
@@ -282,14 +280,6 @@
   <section>
     <h2>Open Source &amp; Side Projects</h2>
     <div class="proj">
-      <div class="proj-row">
-        <span class="proj-name"><a href="https://github.com/shuding/nextra/pulls?q=author%3AvladavoX">nextra</a></span>
-        <span class="proj-desc">Upstream PRs to the Next.js documentation framework — exposing Pagefind index options, and fixing uninformative error output on malformed meta fields.</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-name"><a href="https://github.com/filestack/filestack-react/pull/160">filestack-react</a></span>
-        <span class="proj-desc">Upstream fix so the package resolves correctly under Vite.</span>
-      </div>
       <div class="proj-row">
         <span class="proj-name"><a href="https://github.com/vladavoX/CEP-reload">CEP-reload</a></span>
         <span class="proj-desc">Dev tool that hot-reloads host-side JSX in CEP panels, so you don't reopen the panel on every save.</span>
