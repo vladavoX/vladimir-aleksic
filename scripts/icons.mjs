@@ -5,17 +5,14 @@
 //
 //   node scripts/icons.mjs
 //
-// Idempotent: same inputs, same outputs, nothing left behind.
+// Idempotent for the icons, and nothing is left behind. The OG card is the one
+// exception: og.html pulls JetBrains Mono from Google Fonts, so a run without
+// network access still succeeds but commits a card typeset in the fallback
+// monospace. Eyeball public/og.png after regenerating.
 
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import {
-	mkdtempSync,
-	readFileSync,
-	rmSync,
-	statSync,
-	writeFileSync,
-} from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -53,21 +50,21 @@ function sleep(ms) {
 
 /**
  * Chrome 151 writes the screenshot and then keeps the process alive, so poll
- * for a file that has stopped growing instead of waiting on exit.
+ * for the file instead of waiting on exit. A stable byte count is not enough
+ * evidence — the 50 KB og.png can land in more than one write, and two equal
+ * samples across a quiet 150 ms would accept a half-written file — so wait for
+ * the IEND trailer that says the encoder is done.
  */
-async function waitForStableFile(file, timeoutMs = 45_000) {
+async function waitForCompletePng(file, timeoutMs = 45_000) {
 	const deadline = Date.now() + timeoutMs;
-	let previous = -1;
 	while (Date.now() < deadline) {
 		await sleep(150);
-		let size = -1;
 		try {
-			size = statSync(file).size;
+			const bytes = readFileSync(file);
+			if (bytes.length > 12 && bytes.subarray(-12).equals(PNG_IEND)) return;
 		} catch {
-			continue;
+			// Not created yet, or being rewritten under us; try again.
 		}
-		if (size > 0 && size === previous) return;
-		previous = size;
 	}
 	throw new Error(`timed out waiting for ${file}`);
 }
@@ -75,6 +72,9 @@ async function waitForStableFile(file, timeoutMs = 45_000) {
 /** Chrome forks renderer and GPU helpers, so take the whole group down. */
 async function killTree(child) {
 	const exited = once(child, "exit").catch(() => {});
+	// spawn never got off the ground, so there is no group to signal and
+	// `-undefined` would only throw.
+	if (child.pid === undefined) return;
 	try {
 		process.kill(-child.pid, "SIGKILL");
 	} catch {
@@ -88,6 +88,10 @@ async function killTree(child) {
 
 async function screenshot({ page, out, width, height, timeBudgetMs = 4000 }) {
 	rmSync(out, { force: true });
+	// A fresh profile per launch: Chrome is taken down with SIGKILL, which leaves
+	// the singleton lock behind, and a reused profile directory can make the next
+	// launch bail out instead of screenshotting.
+	const profile = mkdtempSync(join(work, "chrome-profile-"));
 	const child = spawn(
 		CHROME,
 		[
@@ -98,15 +102,22 @@ async function screenshot({ page, out, width, height, timeBudgetMs = 4000 }) {
 			"--no-first-run",
 			"--no-default-browser-check",
 			`--virtual-time-budget=${timeBudgetMs}`,
-			`--user-data-dir=${join(work, "chrome-profile")}`,
+			`--user-data-dir=${profile}`,
 			`--window-size=${width},${height}`,
 			`--screenshot=${out}`,
 			`file://${page}`,
 		],
 		{ stdio: "ignore", detached: true },
 	);
+	// Nothing listens for 'error' otherwise, and an unspawnable binary — no
+	// Chrome at CHROME, wrong path on a non-mac box — would raise it as an
+	// uncaught exception that skips the temp-directory cleanup below.
+	const spawnFailed = once(child, "error").then(([error]) => {
+		throw new Error(`cannot run Chrome at ${CHROME}: ${error.message}`);
+	});
+	spawnFailed.catch(() => {});
 	try {
-		await waitForStableFile(out);
+		await Promise.race([waitForCompletePng(out), spawnFailed]);
 	} finally {
 		await killTree(child);
 	}

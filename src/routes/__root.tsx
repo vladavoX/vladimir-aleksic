@@ -44,10 +44,18 @@ export const Route = createRootRoute({
 			},
 			{ property: "og:site_name", content: "Vladimir Aleksic" },
 			{ property: "og:locale", content: "en_US" },
-			{ name: "twitter:card", content: "summary" },
+			// Without an absolute image there is no large card to show, so the type
+			// tracks whether one was emitted at all.
+			{
+				name: "twitter:card",
+				content: siteUrl ? "summary_large_image" : "summary",
+			},
 			...(siteUrl
 				? [
-						{ property: "og:image", content: `${siteUrl}/icon-512.png` },
+						{ property: "og:image", content: `${siteUrl}/og.png` },
+						{ property: "og:image:type", content: "image/png" },
+						{ property: "og:image:width", content: "1200" },
+						{ property: "og:image:height", content: "630" },
 						{
 							property: "og:image:alt",
 							content: "Vladimir Aleksic — portfolio",
