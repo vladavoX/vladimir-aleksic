@@ -28,6 +28,9 @@ jobs:
       - name: Run Biome
         run: biome ci .
 
+      - name: Typecheck
+        run: pnpm run typecheck
+
       - name: Build
         run: pnpm run build
 

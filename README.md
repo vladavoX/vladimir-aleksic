@@ -29,13 +29,15 @@ pnpm dev        # http://localhost:3000
 ## Checks
 
 ```bash
-pnpm test       # vitest run
-pnpm check      # biome lint + format check
-pnpm build      # production build (also what CI runs)
+pnpm test        # vitest run
+pnpm check       # biome lint + format check
+pnpm typecheck   # tsc --noEmit
+pnpm build       # production build
 ```
 
-CI (`.github/workflows/ci.yml`) runs Biome, build and tests on every push to
-`master` and every pull request.
+CI (`.github/workflows/ci.yml`) runs all four on every push to `master` and
+every pull request. The build itself does not typecheck, which is why
+`typecheck` is its own step.
 
 ## Deploy
 
