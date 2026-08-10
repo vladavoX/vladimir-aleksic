@@ -3,7 +3,8 @@
 	"frontend": [
 		"React",
 		"Next.js",
-		"TanStack",
+		"TanStack Start",
+		"TanStack Router",
 		"TanStack Query",
 		"shadcn/ui",
 		"Tailwind CSS",
@@ -11,7 +12,13 @@
 		"HTML"
 	],
 	"mobile": ["React Native", "Expo"],
-	"backend": ["Node.js", "Express", "Spring Boot", "REST"],
+	"backend": [
+		"Node.js",
+		"Express",
+		"Spring Boot",
+		"REST API design",
+		"MCP servers"
+	],
 	"databases": [
 		"PostgreSQL",
 		"MongoDB",
@@ -27,9 +34,12 @@
 		"unit": ["Vitest", "Jest", "Testing Library"],
 		"e2e": ["Playwright", "Cypress"]
 	},
+	"quality": ["Biome", "oxlint", "ESLint", "Prettier", "GitHub Actions"],
 	"build": ["Vite", "Webpack", "esbuild", "Turborepo"],
 	"packageManagers": ["pnpm", "npm", "Bun", "Yarn"],
 	"devops": ["Docker", "GitHub Actions", "Vercel", "Cloudflare"],
 	"tooling": ["Git", "GitHub", "VSCode", "Postman", "Zod"],
+	"ai": ["Claude Code", "MCP servers", "agent-facing tooling"],
+	"adobe": ["CEP extensions", "ExtendScript", "After Effects automation"],
 	"learning": ["Rust", "Zig"]
 }

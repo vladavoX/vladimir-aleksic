@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, FolderGit2, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -8,22 +8,22 @@ const yearsShipping = new Date().getFullYear() - SHIPPING_SINCE;
 
 const stats = [
 	{
-		label: "CONTRIBUTIONS / YR",
-		value: "2100+",
-		valueSuffix: "/ past year",
-		caption: "commits · PRs · reviews",
+		label: "VIDEOS RENDERED / MO",
+		value: "300k+",
+		valueSuffix: "/ Plainly Videos",
+		caption: "the platform I build on",
 	},
 	{
 		label: "YEARS SHIPPING",
 		value: `${yearsShipping}+`,
 		valueSuffix: `/ since ${SHIPPING_SINCE}`,
-		caption: "full-stack work",
+		caption: "full-stack, frontend-focused",
 	},
 	{
-		label: "LANGUAGES IN PROD",
-		value: "3",
-		valueSuffix: "/ daily",
-		caption: "TypeScript · JavaScript · Java",
+		label: "OSS REPOS",
+		value: "4",
+		valueSuffix: "/ maintained",
+		caption: "plugin · MCP server · examples · CEP-reload",
 	},
 	{
 		label: "COFFEE / DAY",
@@ -35,29 +35,29 @@ const stats = [
 
 const chips = [
 	{ label: "role", value: "full-stack" },
+	{ label: "focus", value: "frontend" },
 	{ label: "primary", value: "TypeScript" },
-	{ label: "years", value: `${yearsShipping}` },
-	{ label: "status", value: "accepting work" },
+	{ label: "status", value: "open to work" },
 ];
 
 const paragraphs = [
-	"I'm a full-stack developer at Plainly, where I build Plainly Videos — a video automation platform that turns Adobe After Effects templates and your data into rendered videos at scale — and help shape Plainly Flows, the product we're launching next. Day to day that's TypeScript across the frontend, Node services, and end-to-end tests, with some Java and Spring Boot on the backend.",
-	"I've been shipping production software since 2022. I started with an internship at Levi9, spent a year at Positive Tech delivering client projects across the stack, and have been at Plainly since late 2023. Along the way I maintain our open source — the Adobe ↔ Plainly After Effects plugin and the public REST API examples.",
-	"I care about clean, well-tested code and tools that get out of the way. React, TanStack, and Node are my daily drivers. Based in Novi Sad, Serbia — open to new work.",
+	"I'm a full-stack engineer at Plainly — seven people, three engineers — where I own most of the frontend. Our platform, Plainly Videos, renders around 300,000 videos a month for API and no-code customers, and I look after its dashboard: a React and TypeScript app covering projects, template parameterization, render queues and billing. I also took PlainlyFlows from an empty repo to launch in July 2026, and have shipped against real user feedback ever since, picking the next slice from what people actually do in the product.",
+	"I build in the open. The Adobe ↔ Plainly After Effects plugin is mine end to end — a TypeScript CEP extension with outside issues and contributors, and signed releases shipped on tag. I work on our MCP server so AI agents can drive the render API directly, wrote CEP-reload because reopening a panel on every save is no way to live, shipped willitspam.com solo, and send fixes upstream to the tools we depend on.",
+	"CI is what makes moving fast safe, not a tax: Vitest, Playwright and Cypress suites gated in GitHub Actions, Biome and oxlint enforced, types shared across repos through a Turborepo package so mismatches fail at the boundary. Claude Code is a daily driver — I write its rules, review what it produces, and add the checks that let it verify its own work. Based in Novi Sad, Serbia, open to new work.",
 ];
 
 const quickStats = [
 	{
 		label: "STACK",
-		value: "TypeScript · React · Next.js",
+		value: "TypeScript · React · TanStack · Next.js",
+	},
+	{
+		label: "QUALITY",
+		value: "Vitest · Playwright · GitHub Actions",
 	},
 	{
 		label: "EDITOR",
-		value: "VSCode",
-	},
-	{
-		label: "LEARNING NEXT",
-		value: "Rust / Zig",
+		value: "VSCode + Claude Code",
 	},
 	{
 		label: "OFF-KEYBOARD",
@@ -71,7 +71,7 @@ function Home() {
 			<div className="space-y-2">
 				<h1 className="text-accent text-2xl">Vladimir Aleksic</h1>
 				<p className="text-subtle text-sm">
-					Full-Stack Software Developer · Novi Sad, RS
+					Full-Stack Engineer, frontend-focused · Novi Sad, RS
 				</p>
 			</div>
 			<div className="flex items-center gap-2 flex-wrap">
@@ -94,7 +94,7 @@ function Home() {
 					</p>
 				))}
 			</div>
-			<div>
+			<div className="flex flex-wrap items-center gap-2">
 				<Link
 					to="/contact"
 					className="inline-flex items-center gap-2 rounded-sm border border-accent-border bg-accent/10 px-3 py-2 text-accent transition-colors hover:bg-accent/20"
@@ -102,6 +102,13 @@ function Home() {
 					<Mail className="size-3.5" />
 					open contact.md
 					<ArrowRight className="size-3.5" />
+				</Link>
+				<Link
+					to="/projects"
+					className="inline-flex items-center gap-2 rounded-sm border border-divider px-3 py-2 text-subtle transition-colors hover:border-accent-border hover:text-accent"
+				>
+					<FolderGit2 className="size-3.5" />
+					projects.md
 				</Link>
 			</div>
 			<div className="border border-divider p-4 rounded-sm space-y-4">

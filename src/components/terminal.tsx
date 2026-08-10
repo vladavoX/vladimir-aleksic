@@ -9,7 +9,8 @@ import {
 	runCommand,
 } from "#/terminal-commands";
 
-const WHOAMI = "Vladimir Aleksic — Full-Stack Developer · Novi Sad, RS";
+const WHOAMI =
+	"Vladimir Aleksic — Full-Stack Engineer, frontend-focused · Novi Sad, RS";
 const PROMPT = "~/portfolio $";
 
 type Entry = OutputLine & { id: number };

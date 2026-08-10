@@ -24,23 +24,23 @@ export const Route = createRootRoute({
 		meta: [
 			{ charSet: "utf-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
-			{ title: "Vladimir Aleksic — Full-Stack Developer" },
+			{ title: "Vladimir Aleksic — Full-Stack Engineer" },
 			{
 				name: "description",
 				content:
-					"Full-stack developer at Plainly, building Plainly Videos and Plainly Flows with TypeScript, React, TanStack, and Node. Based in Novi Sad, Serbia — open to work.",
+					"Full-stack engineer at Plainly, frontend-focused: I own the Plainly Videos dashboard, took PlainlyFlows from empty repo to launch, and maintain the Adobe ↔ Plainly After Effects plugin. TypeScript, React, TanStack, Node. Novi Sad, Serbia — open to work.",
 			},
 			{ name: "color-scheme", content: "dark" },
 			{ name: "theme-color", content: "#000000" },
 			{ property: "og:type", content: "website" },
 			{
 				property: "og:title",
-				content: "Vladimir Aleksic — Full-Stack Developer",
+				content: "Vladimir Aleksic — Full-Stack Engineer",
 			},
 			{
 				property: "og:description",
 				content:
-					"Full-stack developer at Plainly. TypeScript, React, TanStack, and Node. Based in Novi Sad, Serbia.",
+					"Full-stack engineer at Plainly, frontend-focused. TypeScript, React, TanStack, Node. Novi Sad, Serbia — open to work.",
 			},
 			{ property: "og:site_name", content: "Vladimir Aleksic" },
 			{ property: "og:locale", content: "en_US" },

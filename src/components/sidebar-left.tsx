@@ -31,7 +31,7 @@ export function SidebarLeft({
 						</p>
 						<div>
 							<p className="text-sm">Vladimir Aleksic</p>
-							<p className="text-muted">Full-Stack Software Developer</p>
+							<p className="text-muted">Full-Stack Engineer</p>
 						</div>
 					</div>
 					<p className="flex items-center gap-2 text-subtle">

@@ -6,12 +6,13 @@ terminal you can actually type in.
 
 Each "file" in the sidebar is a route:
 
-| File             | Route         | What it is                                  |
-| ---------------- | ------------- | ------------------------------------------- |
-| `README.md`      | `/`           | Bio, by-the-numbers, quick stats            |
-| `skills.json`    | `/skills`     | `src/data/skills.json` rendered as JSON     |
-| `experience.log` | `/experience` | Career timeline with per-role tech stacks   |
-| `contact.md`     | `/contact`    | Email, GitHub, LinkedIn, CV, current status |
+| File             | Route         | What it is                                    |
+| ---------------- | ------------- | --------------------------------------------- |
+| `README.md`      | `/`           | Bio, by-the-numbers, quick stats              |
+| `skills.json`    | `/skills`     | `src/data/skills.json` rendered as JSON       |
+| `experience.log` | `/experience` | Career timeline with per-role stacks, plus education |
+| `projects.md`    | `/projects`   | Open source maintained, upstream PRs, side products |
+| `contact.md`     | `/contact`    | Email, GitHub, LinkedIn, CV, current status   |
 
 ## Stack
 
@@ -64,6 +65,7 @@ Everything editable lives in data modules, not in JSX:
   automatically.
 - `src/data/contact.ts` — contact rows, location, timezone, availability. Shared
   by the `/contact` route and the terminal's `contact` command.
+- `src/data/projects.ts` — the `/projects` cards; `kind` picks the badge colour.
 - `src/files.tsx` — the file list. Add an entry and it appears in the sidebar,
   in tab handling, in `ls`, and in `cd`/`open` autocomplete.
 - `src/routes/experience/route.tsx` — the timeline array.

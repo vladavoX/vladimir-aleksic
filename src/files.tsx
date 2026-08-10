@@ -1,4 +1,4 @@
-import { Braces, Logs } from "lucide-react";
+import { Braces, FolderGit2, Logs } from "lucide-react";
 
 export const files = [
 	{ icon: "M", name: "README.md", to: "/" },
@@ -7,6 +7,11 @@ export const files = [
 		icon: <Logs className="size-3.5" />,
 		name: "experience.log",
 		to: "/experience",
+	},
+	{
+		icon: <FolderGit2 className="size-3.5" />,
+		name: "projects.md",
+		to: "/projects",
 	},
 	{ icon: "M", name: "contact.md", to: "/contact" },
 ];
