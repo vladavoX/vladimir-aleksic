@@ -45,10 +45,18 @@ export const Route = createRootRoute({
 			},
 			{ property: "og:site_name", content: "Vladimir Aleksic" },
 			{ property: "og:locale", content: "en_US" },
-			{ name: "twitter:card", content: "summary" },
+			// Without an absolute image there is no large card to show, so the type
+			// tracks whether one was emitted at all.
+			{
+				name: "twitter:card",
+				content: siteUrl ? "summary_large_image" : "summary",
+			},
 			...(siteUrl
 				? [
-						{ property: "og:image", content: `${siteUrl}/logo512.png` },
+						{ property: "og:image", content: `${siteUrl}/og.png` },
+						{ property: "og:image:type", content: "image/png" },
+						{ property: "og:image:width", content: "1200" },
+						{ property: "og:image:height", content: "630" },
 						{
 							property: "og:image:alt",
 							content: "Vladimir Aleksic — portfolio",
@@ -61,8 +69,10 @@ export const Route = createRootRoute({
 				rel: "stylesheet",
 				href: appCss,
 			},
-			{ rel: "icon", href: "/favicon.ico", sizes: "any" },
-			{ rel: "apple-touch-icon", href: "/logo192.png" },
+			{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+			// Legacy fallback for anything that will not take the SVG.
+			{ rel: "icon", href: "/favicon.ico", sizes: "48x48 32x32 16x16" },
+			{ rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
 			{ rel: "manifest", href: "/manifest.json" },
 		],
 	}),

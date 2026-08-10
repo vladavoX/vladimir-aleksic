@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Opaque on purpose: a favicon sits on browser chrome we do not control. -->
+  <rect width="32" height="32" fill="#000000"/>
+  <!-- Letterforms are paths, never text nodes: an SVG favicon that names a font
+       gets whatever the viewer's OS substitutes. #32a55a is the accent token
+       from src/styles.css, oklch(64% 0.15 151), resolved to sRGB. Both letters
+       are 22 tall on a 3.4 stem, kerned to 6 so the pair still reads at 16px. -->
+  <g fill="#32a55a">
+    <path d="M3.4 5 L9.8 27 L16.2 5 L12.8 5 L9.8 15.313 L6.8 5 Z"/>
+    <path d="M22.2 5 L28.6 27 L25.2 27 L22.2 16.688 L19.2 27 L15.8 27 Z"/>
+    <path d="M17.778 20.2 L26.622 20.2 L27.436 23 L16.964 23 Z"/>
+  </g>
+</svg>
