@@ -2,9 +2,11 @@
 
 Date: 2026-08-10
 
-Five independent workstreams, one pull request each. They are separable: no
-piece depends on another's runtime behaviour, only on merge order where two
-touch the same file.
+Five independent workstreams, one pull request each. They are separable with one
+exception: PR 3 references `/og.png`, which PR 2 produces, and PR 2 removes
+`logo512.png`, which the root route's `og:image` currently points at. That is a
+real artefact dependency, not just a merge-order conflict — see "Merge order"
+for how it is sequenced. Everything else is independent at runtime.
 
 ## Established facts
 
@@ -17,8 +19,10 @@ These were verified before design, not assumed.
 - The Cloudflare account subdomain is `vladavox.workers.dev` — DNS resolves and
   Cloudflare answers there. `vladimir-aleksic.vladavox.workers.dev` currently
   returns HTTP 404 (error 1042), so the Worker is not serving on that hostname
-  yet. The canonical URL becomes correct once `pnpm deploy` runs with the
-  workers.dev route enabled.
+  yet. `wrangler.jsonc` declares no `workers_dev`, no `routes` and no custom
+  domain, so nothing enables that hostname today — PR 3 must add
+  `"workers_dev": true` to `wrangler.jsonc` and deploy, or the canonical URL it
+  hardcodes stays dead.
 - The footer branch indicator is **already** the real branch:
   `gitBranch()` in `vite.config.ts` resolves `CF_PAGES_BRANCH` /
   `WORKERS_CI_BRANCH`, then local git, then falls back to `"main"`, and is baked
@@ -35,10 +39,23 @@ The terminal panel can only be toggled by clicking its header
 (`src/components/terminal.tsx`). Add keyboard control matching VS Code.
 
 New `src/keybindings.ts` exports a pure
-`matchShortcut({ ctrlKey, metaKey, altKey, code, key })` returning
+`matchShortcut({ ctrlKey, metaKey, altKey, shiftKey, code, key })` returning
 `"toggle" | "clear" | "close" | null`. Pure so it is unit-tested without a DOM,
 the pattern `src/terminal-commands.ts` already establishes. `terminal.tsx` adds
 a single `window` `keydown` listener that dispatches on the result.
+
+`matchShortcut` sees only modifiers and the key, never focus, so it cannot
+decide the two scoped bindings on its own. `"toggle"` is global; `"clear"` and
+`"close"` are returned for the key combination and then gated in `terminal.tsx`
+on the event target being inside the panel (`bodyRef.current?.contains(target)`,
+or `target === inputRef.current` for `clear`). Without that gate a window-level
+listener would swallow `Ctrl+L` — the browser's address-bar shortcut — anywhere
+on the page, and `Esc` would collapse the terminal while the user is only trying
+to dismiss the mobile sidebar.
+
+`shiftKey` is part of the input and must be `false` for every binding: VS Code
+uses `Ctrl+Shift+\`` for "new terminal", and ignoring Shift would silently fold
+it, and `Cmd+Shift+J`, into the toggle.
 
 | Keys                    | Action                                              |
 | ----------------------- | --------------------------------------------------- |
@@ -56,8 +73,10 @@ Requirements:
 - `Esc` must move focus to the toggle button before collapsing. The panel is
   `inert` when closed, and focus left inside an inert subtree is an
   accessibility defect.
-- Discoverability: render a `⌃\`` hint chip on the TERMINAL bar, `hidden
-  sm:inline` so it does not appear on touch devices.
+- Discoverability: render a `Ctrl+\`` hint chip on the TERMINAL bar, `hidden
+  sm:inline` so it does not appear on touch devices. Plain ASCII, not the Mac
+  `⌃` glyph: U+2303 is outside the latin subset PR 3 self-hosts, so it would
+  render in whatever fallback font the OS picks.
 - Update the README terminal section.
 
 ## PR 2 — Icon and Open Graph asset set
@@ -85,8 +104,12 @@ Outputs:
 - `og.png` at 1200×630 from `scripts/og.html`: the mark, name, role, location.
 
 Deletes `logo192.png` and `logo512.png`. Rewrites `public/manifest.json` and
-the `links` array in `src/routes/__root.tsx`. README gains a regeneration
-section mirroring the existing CV one.
+both head arrays in `src/routes/__root.tsx` — not just `links` (which holds the
+`apple-touch-icon` pointing at `/logo192.png`) but also `meta`, where the
+conditional `og:image` points at `${siteUrl}/logo512.png`. Missing that second
+one leaves the Open Graph card resolving to a deleted file for the three merges
+between PR 2 and PR 3; PR 2 repoints it at `/og.png` itself rather than deferring
+to PR 3. README gains a regeneration section mirroring the existing CV one.
 
 ## PR 3 — SEO
 
@@ -98,25 +121,36 @@ defines `head()`.
   `VITE_SITE_URL` env indirection, its declaration in `src/vite-env.d.ts` and
   its README section. As it stands, an unset variable silently drops the Open
   Graph image in production, which is the failure mode the env var was meant to
-  prevent.
+  prevent. Because the constant is now unconditional, enabling the hostname is
+  part of this PR (`"workers_dev": true` in `wrangler.jsonc`): a `rel=canonical`
+  and `og:url` pointing at a host that answers 404 is worse than omitting them —
+  it de-indexes whatever host is actually serving.
 - `head()` on each of the five routes: unique `title` and `description`, plus
-  `og:title`, `og:description`, `og:url` and `rel=canonical` for that path.
-- Root additionally emits `twitter:card: summary_large_image`, `og:image`
-  pointing at `/og.png` with `og:image:width`, `og:image:height`,
-  `og:image:alt`, and `meta name="author"`.
+  `og:title`, `og:description`, and absolute `og:url` / `rel=canonical`
+  (`${SITE_URL}${path}`) for that path.
+- Root additionally emits `twitter:card: summary_large_image`, `og:image` as the
+  absolute `${SITE_URL}/og.png` — scrapers do not resolve root-relative image
+  URLs, which is the whole reason the deleted code guarded on an origin — with
+  `og:image:width`, `og:image:height`, `og:image:alt`, and
+  `meta name="author"`.
 - JSON-LD `Person` + `ProfilePage` in the root head: name, `jobTitle`, `url`,
   `sameAs` for GitHub and LinkedIn, address Novi Sad RS, `knowsAbout` derived
   from `src/data/skills.json`.
 - `public/sitemap.xml` listing the five routes and `/cv.html`, with a vitest
-  asserting every route in `src/files.tsx` appears in it. The test is the drift
-  guard; a static file alone rots.
+  asserting the set of route `<loc>` values equals the set of routes in
+  `src/files.tsx` — both directions, plus that every `<loc>` starts with
+  `SITE_URL`. A one-directional "every route appears" assertion passes while a
+  renamed route leaves its old `<loc>` in the file, and crawlers keep being
+  handed a URL that 404s. The test is the drift guard; a static file alone rots.
 - `public/robots.txt` gains a `Sitemap:` line.
 - Fonts: `src/styles.css:1` imports JetBrains Mono from Google Fonts inside
   CSS, which blocks rendering on a third-party round trip with no `preconnect`.
   Replace with a self-hosted latin `woff2` under `public/fonts/`, an
   `@font-face` rule with `font-display: swap`, and `rel=preload`. JetBrains
   Mono is OFL-1.1, so ship `OFL.txt` next to the font file.
-- `/skills` renders no heading of any kind. Add an `h1`.
+- `/skills` renders no heading of any kind, and `/experience` opens at `h2`
+  (`CAREER TIMELINE`, `EDUCATION`) with no `h1` above them. Add an `h1` to both
+  so all five routes have a single top-level heading.
 
 ## PR 4 — Polish
 
@@ -124,9 +158,13 @@ defines `head()`.
   regardless of reality. Replace with three states: unknown → the label `CI`
   as a plain link to the Actions page, asserting nothing; passing → green
   check; failing → red. Status comes from an unauthenticated fetch of the
-  public Actions API on mount, failing soft. Against today's private repo that
-  fetch 404s and the badge stays in its unknown state, which is the honest
-  rendering. It starts working on its own if the repo becomes public. No
+  public Actions API on mount. "Failing soft" means branching on
+  `response.ok` as well as catching rejections — a 404 from `api.github.com`
+  resolves normally, so a bare `try/catch` around `res.json()` is not what keeps
+  the badge in its unknown state. The effect also aborts on unmount
+  (`AbortController`) so the `setState` cannot land after teardown. Against
+  today's private repo that fetch 404s and the badge stays unknown, which is the
+  honest rendering. It starts working on its own if the repo becomes public. No
   credential is ever sent from the client.
 - **404 status.** ~~The not-found route serves HTTP 200.~~ **Wrong — this was
   never broken.** The design asserted a 200 without measuring it. An unknown
@@ -138,12 +176,19 @@ defines `head()`.
   anyway: h3's `prepareResponse` ignores `event.res.status` when the handler
   returns a `Response`, which SSR always does. No code change.
 - **Response headers** on the Worker: `Referrer-Policy`,
-  `X-Content-Type-Options`, `X-Frame-Options`, `Permissions-Policy`. CSP is
-  deferred or shipped report-only — TanStack Start injects inline scripts, so
+  `X-Content-Type-Options`, `X-Frame-Options`, `Permissions-Policy`. Set in the
+  server request handler, not a `public/_headers` file: with Workers static
+  assets `_headers` decorates asset responses, while the HTML document is
+  generated by the Worker — and the document is the only response where
+  `X-Frame-Options`, `Referrer-Policy` and `Permissions-Policy` do anything. CSP
+  is deferred or shipped report-only — TanStack Start injects inline scripts, so
   an enforcing policy needs nonce plumbing, which is separate work.
 - **Terminal commands.** Add `cv`, which needs a new `open-url` effect and
   opens `/cv.pdf`, and `pwd`. `cat` and `history` are deliberately skipped.
-  Update `COMMANDS`, the engine tests and the README.
+  Update `COMMANDS`, the `Effect` union, the `effect` dispatch in
+  `terminal.tsx`'s `submit` (which today only branches on `clear` and
+  `navigate`, so an unhandled variant is a silent no-op), the engine tests and
+  the README.
 - **Mobile terminal.** It opens expanded, taking 12 rem of a phone viewport.
   Collapse on mount below 640 px via `matchMedia`, after hydration, so the
   server markup is unchanged.
@@ -159,9 +204,18 @@ order, so an array round-trips the strip's left-to-right order.
 - Initial state stays exactly as today. Reading storage inside `useState`
   initialisation would make the first client render disagree with the SSR HTML.
 - A mount effect parses stored tabs, discards any route absent from
-  `src/files.tsx`, unions the current pathname, and sets state. Dropping
-  unknown routes stops a renamed route from resurrecting a dead tab.
-- A second effect writes on change.
+  `src/files.tsx`, and sets state. Dropping unknown routes stops a renamed route
+  from resurrecting a dead tab.
+- The current pathname is unioned in **only when it is itself a route in
+  `src/files.tsx`** — the same guard the existing initial state applies. Union it
+  unconditionally and landing on `/nope` opens a tab whose `fileName(tab)` is
+  `undefined`, i.e. a blank label in the strip, and then persists it; the
+  existing comment in `__root.tsx` exists precisely to prevent that. Restoring an
+  empty or unparseable value falls back to today's initial state rather than an
+  empty strip.
+- A second effect writes on change. It is declared *after* the restore effect, so
+  the read happens before the first write can clobber storage with the
+  pre-restore state.
 - Every storage access is wrapped in `try/catch`. Safari private mode throws on
   access, not only on write.
 - Pure `parseTabs` / `serializeTabs` live in `src/tabs.ts` and are unit-tested
@@ -185,12 +239,14 @@ trivial:
 
 ## Verification
 
-Every PR must pass what CI runs, from a clean install in its own worktree:
+Every PR must pass what CI runs, from a clean install in its own worktree. CI
+invokes Biome through `biomejs/setup-biome` as `biome ci .` rather than the
+`check` script, so run the local equivalent:
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm test
+pnpm exec biome ci .   # CI's Biome step; `pnpm check` locally
 pnpm typecheck
-pnpm check
 pnpm build
+pnpm test
 ```
