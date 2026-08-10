@@ -13,6 +13,7 @@ import { Header } from "#/components/header";
 import { Main } from "#/components/main";
 import { SidebarLeft } from "#/components/sidebar-left";
 import { files } from "#/files";
+import { SECURITY_HEADERS } from "#/security-headers";
 import { parseTabs, serializeTabs, TABS_STORAGE_KEY } from "#/tabs";
 import appCss from "../styles.css?url";
 
@@ -21,6 +22,7 @@ import appCss from "../styles.css?url";
 const siteUrl = import.meta.env.VITE_SITE_URL?.replace(/\/$/, "");
 
 export const Route = createRootRoute({
+	headers: () => SECURITY_HEADERS,
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },

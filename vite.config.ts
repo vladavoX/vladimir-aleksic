@@ -18,7 +18,7 @@ function gitBranch() {
 			encoding: "utf8",
 		}).trim();
 	} catch {
-		return "main";
+		return "master";
 	}
 }
 

@@ -38,10 +38,12 @@ describe("runCommand", () => {
 		for (const name of [
 			"help",
 			"ls",
+			"pwd",
 			"cd",
 			"open",
 			"whoami",
 			"contact",
+			"cv",
 			"echo",
 			"date",
 			"clear",
@@ -53,6 +55,18 @@ describe("runCommand", () => {
 
 	it("ls lists the injected files", () => {
 		expect(texts("ls")).toEqual(["README.md", "skills.json", "experience.log"]);
+	});
+
+	it("pwd prints the working directory the prompt shows", () => {
+		expect(texts("pwd")).toEqual(["~/portfolio"]);
+		expect(runCommand("pwd", ctx).effect).toBeUndefined();
+	});
+
+	it("cv emits an open-url effect for the PDF", () => {
+		expect(runCommand("cv", ctx)).toEqual({
+			lines: [{ kind: "success", text: "opening /cv.pdf…" }],
+			effect: { type: "open-url", url: "/cv.pdf" },
+		});
 	});
 
 	it("echo prints its argument, empty when none", () => {
@@ -129,7 +143,18 @@ describe("completeInput", () => {
 	it("advances an ambiguous command to the common prefix and lists matches", () => {
 		expect(completeInput("c", files)).toEqual({
 			value: "c",
-			suggestions: ["cd", "contact", "clear"],
+			suggestions: ["cd", "contact", "cv", "clear"],
+		});
+	});
+
+	it("completes the new commands too", () => {
+		expect(completeInput("pw", files)).toEqual({
+			value: "pwd ",
+			suggestions: [],
+		});
+		expect(completeInput("cv", files)).toEqual({
+			value: "cv ",
+			suggestions: [],
 		});
 	});
 

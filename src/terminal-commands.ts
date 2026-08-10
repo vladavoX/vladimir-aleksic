@@ -8,7 +8,10 @@ export type OutputLine = {
 	text: string;
 };
 
-export type Effect = { type: "clear" } | { type: "navigate"; to: string };
+export type Effect =
+	| { type: "clear" }
+	| { type: "navigate"; to: string }
+	| { type: "open-url"; url: string };
 
 export interface CommandFile {
 	name: string;
@@ -32,6 +35,11 @@ export interface CommandResult {
 	effect?: Effect;
 }
 
+// The one working directory of this fictional shell. The terminal builds its
+// prompt from this, so `pwd` and the prompt cannot drift apart.
+export const CWD = "~/portfolio";
+const CV_URL = "/cv.pdf";
+
 const out = (text: string): OutputLine => ({ kind: "output", text });
 const err = (text: string): OutputLine => ({ kind: "error", text });
 const ok = (text: string): OutputLine => ({ kind: "success", text });
@@ -40,10 +48,12 @@ const file = (text: string): OutputLine => ({ kind: "file", text });
 const COMMANDS: { name: string; description: string }[] = [
 	{ name: "help", description: "list available commands" },
 	{ name: "ls", description: "list files" },
+	{ name: "pwd", description: "print the working directory" },
 	{ name: "cd", description: "open a file (alias: open)" },
 	{ name: "open", description: "open a file (alias: cd)" },
 	{ name: "whoami", description: "print identity" },
 	{ name: "contact", description: "print email and profile links" },
+	{ name: "cv", description: "open the CV as a PDF" },
 	{ name: "echo", description: "print text" },
 	{ name: "date", description: "print the current date and time" },
 	{ name: "clear", description: "clear the terminal" },
@@ -90,6 +100,8 @@ export function runCommand(input: string, ctx: CommandContext): CommandResult {
 			};
 		case "ls":
 			return { lines: ctx.files.map((entry) => file(entry.name)) };
+		case "pwd":
+			return { lines: [out(CWD)] };
 		case "cd":
 		case "open": {
 			if (arg === "") {
@@ -116,6 +128,11 @@ export function runCommand(input: string, ctx: CommandContext): CommandResult {
 							.join("\n"),
 					},
 				],
+			};
+		case "cv":
+			return {
+				lines: [ok(`opening ${CV_URL}…`)],
+				effect: { type: "open-url", url: CV_URL },
 			};
 		case "echo":
 			return { lines: [out(arg)] };
