@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vladimir Aleksic — Open Graph card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Source for public/og.png — rendered at 1200x630 by scripts/icons.mjs.
+     Only ever rasterised by Chrome, so oklch() and a network font are fine
+     here in a way they would not be inside an SVG favicon. */
+  :root{
+    --accent:oklch(64% 0.15 151);
+    --accent-border:oklch(44% 0.12 151);
+    --divider:oklch(27.8% 0.033 256.848);
+    --subtle:oklch(70.7% 0.022 261.325);
+    --muted:oklch(44.6% 0.03 256.802);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{width:1200px;height:630px;overflow:hidden}
+
+  body{
+    background:#000;
+    color:var(--subtle);
+    font-family:"JetBrains Mono",ui-monospace,monospace;
+    font-size:20px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- editor chrome, same furniture as the site ---------- */
+  .bar{
+    height:58px;
+    flex:0 0 58px;
+    display:flex;
+    align-items:stretch;
+    justify-content:space-between;
+    color:var(--muted);
+  }
+  .bar.top{border-bottom:1px solid var(--divider)}
+  .bar.bottom{border-top:1px solid var(--divider)}
+  .bar > div{display:flex;align-items:stretch}
+  .bar span{display:flex;align-items:center;padding:0 20px}
+
+  .tab-active{
+    color:var(--accent);
+    border-left:1px solid var(--divider);
+    border-right:1px solid var(--divider);
+  }
+  .mode{
+    background:var(--accent);
+    color:#000;
+    font-weight:600;
+    letter-spacing:.06em;
+  }
+  .ruled{border-right:1px solid var(--divider)}
+  .ruled-left{border-left:1px solid var(--divider)}
+  .ok{color:var(--accent)}
+
+  /* ---------- card body ---------- */
+  main{
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    gap:56px;
+    padding:0 72px;
+    background:color-mix(in oklab,var(--muted) 10%,transparent);
+  }
+
+  .mark{
+    flex:0 0 auto;
+    width:184px;
+    height:184px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#000;
+    border:1px solid var(--divider);
+    border-radius:2px;
+  }
+  .mark img{display:block;width:132px;height:132px}
+
+  h1{
+    font-size:66px;
+    font-weight:500;
+    line-height:1.05;
+    letter-spacing:-.02em;
+    color:var(--accent);
+  }
+  .role{margin-top:16px;font-size:27px;color:var(--subtle)}
+  .where{margin-top:8px;font-size:23px;color:var(--muted)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .chips p{
+    display:flex;
+    align-items:center;
+    font-size:19px;
+    border:1px solid var(--divider);
+    border-radius:2px;
+  }
+  .chips span{padding:7px 12px}
+  .chips b{
+    padding:7px 12px;
+    font-weight:400;
+    color:var(--accent);
+    background:color-mix(in oklab,var(--accent) 10%,transparent);
+  }
+</style>
+</head>
+<body>
+  <div class="bar top">
+    <div>
+      <span>0: portfolio</span>
+      <span class="tab-active">1: ~/portfolio*</span>
+      <span>2: zsh</span>
+    </div>
+    <div><span>vladimir@dev.local</span></div>
+  </div>
+
+  <main>
+    <!-- Pulled from the icon source rather than copied, so the card cannot
+         drift from the favicon. -->
+    <div class="mark"><img src="../public/favicon.svg" alt="VA"></div>
+    <div>
+      <h1>Vladimir Aleksic</h1>
+      <p class="role">Full-Stack Engineer, frontend-focused</p>
+      <p class="where">Novi Sad, RS &middot; open to work</p>
+      <div class="chips">
+        <p><span>primary</span><b>TypeScript</b></p>
+        <p><span>stack</span><b>React &middot; TanStack &middot; Node</b></p>
+      </div>
+    </div>
+  </main>
+
+  <div class="bar bottom">
+    <div>
+      <span class="mode">NORMAL</span>
+      <span class="ruled">~/portfolio</span>
+      <span class="ruled ok">CI passing</span>
+    </div>
+    <div><span class="ruled-left">github.com/vladavoX</span></div>
+  </div>
+</body>
+</html>

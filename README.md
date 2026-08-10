@@ -87,6 +87,28 @@ Any headless Chromium works; `Cmd-P → Save as PDF` from the browser also does,
 with margins set to none. Both files are served, so `/cv.html` is a readable web
 version if you ever want to link that instead.
 
+## Icons
+
+`public/favicon.svg` is the source of truth — a hand-drawn VA monogram, green on
+black, letterforms as paths so no font substitution can happen. Everything else
+in the set is generated from it. Edit the SVG, then regenerate:
+
+```bash
+node scripts/icons.mjs
+```
+
+That writes `public/favicon.ico` (16 + 32 + 48), `apple-touch-icon.png` (180,
+opaque — iOS composites transparency against white), `icon-192.png`,
+`icon-512.png`, `icon-maskable-512.png` (the mark inside Android's ~20% safe
+area) and `og.png` (1200×630, from `scripts/og.html`).
+
+There is no ImageMagick and no sharp in this repo, so the script rasterises with
+headless Chrome and writes the `.ico` container itself — three PNG payloads
+behind an `ICONDIR`, which is what browsers actually read. Chrome is expected at
+the usual macOS path; set `CHROME` to point elsewhere. Editing
+`scripts/og.html`? It loads the monogram from `public/favicon.svg` and JetBrains
+Mono from Google Fonts, so open it in a browser to preview before regenerating.
+
 ## Terminal
 
 `src/terminal-commands.ts` is a pure command engine — input plus a context
