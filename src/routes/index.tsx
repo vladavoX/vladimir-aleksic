@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -92,6 +93,16 @@ function Home() {
 						{text}
 					</p>
 				))}
+			</div>
+			<div>
+				<Link
+					to="/contact"
+					className="inline-flex items-center gap-2 rounded-sm border border-accent-border bg-accent/10 px-3 py-2 text-accent transition-colors hover:bg-accent/20"
+				>
+					<Mail className="size-3.5" />
+					open contact.md
+					<ArrowRight className="size-3.5" />
+				</Link>
 			</div>
 			<div className="border border-divider p-4 rounded-sm space-y-4">
 				<h2 className="text-accent">BY THE NUMBERS</h2>

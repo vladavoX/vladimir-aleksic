@@ -12,10 +12,16 @@ const files = [
 	{ name: "experience.log", to: "/experience" },
 ];
 
+const contact = [
+	{ label: "EMAIL", value: "me@example.com" },
+	{ label: "LINKEDIN", value: "linkedin.com/in/example" },
+];
+
 const ctx: CommandContext = {
 	files,
 	now: () => new Date("2026-07-05T12:00:00Z"),
 	whoami: "Vladimir Aleksic — Full-Stack Developer · Novi Sad, RS",
+	contact,
 };
 
 const texts = (input: string) =>
@@ -35,6 +41,7 @@ describe("runCommand", () => {
 			"cd",
 			"open",
 			"whoami",
+			"contact",
 			"echo",
 			"date",
 			"clear",
@@ -55,6 +62,15 @@ describe("runCommand", () => {
 
 	it("whoami prints the injected identity", () => {
 		expect(texts("whoami")).toEqual([ctx.whoami]);
+	});
+
+	it("contact returns one grid line, a tab-delimited row per entry", () => {
+		expect(runCommand("contact", ctx).lines).toEqual([
+			{
+				kind: "contact",
+				text: "EMAIL\tme@example.com\nLINKEDIN\tlinkedin.com/in/example",
+			},
+		]);
 	});
 
 	it("date formats the injected clock", () => {
@@ -113,7 +129,7 @@ describe("completeInput", () => {
 	it("advances an ambiguous command to the common prefix and lists matches", () => {
 		expect(completeInput("c", files)).toEqual({
 			value: "c",
-			suggestions: ["cd", "clear"],
+			suggestions: ["cd", "contact", "clear"],
 		});
 	});
 

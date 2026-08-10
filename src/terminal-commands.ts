@@ -1,7 +1,10 @@
 import { formatDate } from "#/utils";
 
 export type OutputLine = {
-	kind: "input" | "output" | "error" | "success" | "file" | "help";
+	// "help" and "contact" are two-column rows — one line whose text holds
+	// `left<TAB>right` rows joined by newlines, laid out as a grid by the
+	// component. HTML collapses runs of spaces, so columns cannot be padded here.
+	kind: "input" | "output" | "error" | "success" | "file" | "help" | "contact";
 	text: string;
 };
 
@@ -12,10 +15,16 @@ export interface CommandFile {
 	to: string;
 }
 
+export interface CommandContact {
+	label: string;
+	value: string;
+}
+
 export interface CommandContext {
 	files: CommandFile[];
 	now: () => Date;
 	whoami: string;
+	contact: CommandContact[];
 }
 
 export interface CommandResult {
@@ -34,6 +43,7 @@ const COMMANDS: { name: string; description: string }[] = [
 	{ name: "cd", description: "open a file (alias: open)" },
 	{ name: "open", description: "open a file (alias: cd)" },
 	{ name: "whoami", description: "print identity" },
+	{ name: "contact", description: "print email and profile links" },
 	{ name: "echo", description: "print text" },
 	{ name: "date", description: "print the current date and time" },
 	{ name: "clear", description: "clear the terminal" },
@@ -96,6 +106,17 @@ export function runCommand(input: string, ctx: CommandContext): CommandResult {
 		}
 		case "whoami":
 			return { lines: [out(ctx.whoami)] };
+		case "contact":
+			return {
+				lines: [
+					{
+						kind: "contact",
+						text: ctx.contact
+							.map((entry) => `${entry.label}\t${entry.value}`)
+							.join("\n"),
+					},
+				],
+			};
 		case "echo":
 			return { lines: [out(arg)] };
 		case "date":

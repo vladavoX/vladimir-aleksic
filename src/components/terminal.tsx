@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { CONTACT } from "#/data/contact";
 import { files } from "#/files";
 import {
 	completeInput,
@@ -16,6 +17,12 @@ type Entry = OutputLine & { id: number };
 const WELCOME: Entry[] = [
 	{ id: 0, kind: "output", text: "type 'help' to get started" },
 ];
+
+// Two-column line kinds and the classes for their left/right column.
+const gridClasses: Partial<Record<OutputLine["kind"], [string, string]>> = {
+	help: ["text-accent", "text-muted"],
+	contact: ["text-muted", "text-host"],
+};
 
 const lineClass = (kind: OutputLine["kind"]) => {
 	if (kind === "error") return "text-prompt";
@@ -70,6 +77,7 @@ export function Terminal() {
 			files,
 			now: () => new Date(),
 			whoami: WHOAMI,
+			contact: CONTACT,
 		});
 
 		if (effect?.type === "clear") {
@@ -167,18 +175,20 @@ export function Terminal() {
 			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
 					{lines.map((line) => {
-						if (line.kind === "help") {
+						const grid = gridClasses[line.kind];
+						if (grid) {
+							const [leftClass, rightClass] = grid;
 							return (
 								<div
 									key={line.id}
 									className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-0.5 py-1"
 								>
 									{line.text.split("\n").map((row) => {
-										const [name, description] = row.split("\t");
+										const [left, right] = row.split("\t");
 										return (
-											<Fragment key={name}>
-												<span className="text-accent">{name}</span>
-												<span className="text-muted">{description}</span>
+											<Fragment key={left}>
+												<span className={leftClass}>{left}</span>
+												<span className={rightClass}>{right}</span>
 											</Fragment>
 										);
 									})}

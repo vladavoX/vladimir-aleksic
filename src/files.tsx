@@ -8,6 +8,7 @@ export const files = [
 		name: "experience.log",
 		to: "/experience",
 	},
+	{ icon: "M", name: "contact.md", to: "/contact" },
 ];
 
 export const fileName = (to: string) =>
