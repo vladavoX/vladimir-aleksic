@@ -56,6 +56,13 @@ export function Terminal() {
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
+	// Open stays the initial state so the server markup and the first client
+	// render agree; the collapse happens after mount, where `matchMedia` exists.
+	// 12rem of terminal is most of a phone viewport, so phones start collapsed.
+	useEffect(() => {
+		if (window.matchMedia("(max-width: 640px)").matches) setOpen(false);
+	}, []);
+
 	const scrollToBottom = useCallback(() => {
 		const body = bodyRef.current;
 		if (body) body.scrollTop = body.scrollHeight;
@@ -104,6 +111,11 @@ export function Terminal() {
 		setHistoryIndex(-1);
 
 		if (effect?.type === "navigate") navigate({ to: effect.to });
+		// Still inside the Enter keydown, so this counts as a user gesture and is
+		// not treated as a popup.
+		if (effect?.type === "open-url") {
+			window.open(effect.url, "_blank", "noopener");
+		}
 	};
 
 	const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
