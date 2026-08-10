@@ -1,8 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Kbd, KbdGroup } from "#/components/ui/kbd";
 import { CONTACT } from "#/data/contact";
 import { files } from "#/files";
+import { matchShortcut } from "#/keybindings";
 import {
 	completeInput,
 	type OutputLine,
@@ -18,6 +20,15 @@ type Entry = OutputLine & { id: number };
 const WELCOME: Entry[] = [
 	{ id: 0, kind: "output", text: "type 'help' to get started" },
 ];
+
+// Every input to the command engine is a module constant, so the context is
+// built once and shared by the typed-command and shortcut paths.
+const COMMAND_CONTEXT = {
+	files,
+	now: () => new Date(),
+	whoami: WHOAMI,
+	contact: CONTACT,
+};
 
 // Two-column line kinds and the classes for their left/right column.
 const gridClasses: Partial<Record<OutputLine["kind"], [string, string]>> = {
@@ -43,6 +54,7 @@ export function Terminal() {
 	const idRef = useRef(WELCOME.length);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const bodyRef = useRef<HTMLDivElement>(null);
+	const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
 	const scrollToBottom = useCallback(() => {
 		const body = bodyRef.current;
@@ -74,12 +86,7 @@ export function Terminal() {
 
 	const submit = () => {
 		const entry = input;
-		const { lines: result, effect } = runCommand(entry, {
-			files,
-			now: () => new Date(),
-			whoami: WHOAMI,
-			contact: CONTACT,
-		});
+		const { lines: result, effect } = runCommand(entry, COMMAND_CONTEXT);
 
 		if (effect?.type === "clear") {
 			setLines([]);
@@ -143,7 +150,12 @@ export function Terminal() {
 		}
 	};
 
-	const toggle = () => {
+	// Shared by the header button and the Ctrl+`/Cmd+J shortcut, so the
+	// open-and-focus / close-and-move-focus behavior lives in one place.
+	// The side effects run after `setOpen`, not inside its updater — React
+	// (and the React Compiler this repo builds with) requires updaters to
+	// be pure and is entitled to call one more than once per update.
+	const toggleOpen = useCallback(() => {
 		const next = !open;
 		setOpen(next);
 		if (next) {
@@ -151,14 +163,62 @@ export function Terminal() {
 				inputRef.current?.focus();
 				scrollToBottom();
 			});
+		} else if (bodyRef.current?.contains(document.activeElement)) {
+			// Move focus to the toggle button before collapsing: the collapsed
+			// panel is `inert`, and leaving focus inside an inert subtree is
+			// an accessibility trap.
+			toggleButtonRef.current?.focus();
 		}
-	};
+	}, [open, scrollToBottom]);
+
+	// Routes through the command engine rather than clearing `lines` directly,
+	// so there is one code path for "clear" whether it's typed or shortcut-triggered.
+	const clearTerminal = useCallback(() => {
+		const { effect } = runCommand("clear", COMMAND_CONTEXT);
+		if (effect?.type === "clear") setLines([]);
+	}, []);
+
+	useEffect(() => {
+		const onWindowKeyDown = (event: KeyboardEvent) => {
+			const shortcut = matchShortcut(event);
+			if (!shortcut) return;
+
+			if (shortcut === "toggle") {
+				event.preventDefault();
+				// Auto-repeat from a held-down chord would flip the panel dozens
+				// of times a second and yank focus with it; one keypress, one toggle.
+				if (event.repeat) return;
+				toggleOpen();
+				return;
+			}
+
+			if (shortcut === "close") {
+				// Only steal Escape while it's actually doing something here —
+				// panel open, and focus inside it — otherwise leave it alone.
+				if (!open || !bodyRef.current?.contains(document.activeElement)) return;
+				event.preventDefault();
+				// `toggleOpen` owns the collapse, including moving focus out of
+				// the subtree that is about to become `inert`.
+				toggleOpen();
+				return;
+			}
+
+			// "clear" only fires while the terminal input itself has focus.
+			if (document.activeElement !== inputRef.current) return;
+			event.preventDefault();
+			clearTerminal();
+		};
+
+		window.addEventListener("keydown", onWindowKeyDown);
+		return () => window.removeEventListener("keydown", onWindowKeyDown);
+	}, [open, toggleOpen, clearTerminal]);
 
 	return (
 		<div className="shrink-0 border-t border-divider bg-black text-xs">
 			<button
+				ref={toggleButtonRef}
 				type="button"
-				onClick={toggle}
+				onClick={toggleOpen}
 				aria-expanded={open}
 				className="flex w-full items-center gap-1.5 px-4 py-2 text-accent"
 			>
@@ -168,6 +228,21 @@ export function Terminal() {
 					<ChevronRight className="size-3" />
 				)}
 				TERMINAL
+				{/* Hidden on narrow screens, where the hint is noise next to the label.
+				    Spelled `Ctrl` rather than U+2303, which the latin font subset the
+				    site serves does not carry.
+				    The palette is overridden because shadcn's Kbd assumes `muted` is a
+				    surface with `muted-foreground` on top; here `muted` is a dim text
+				    colour used in 22 other places and `muted-foreground` is undefined,
+				    so the defaults render green-on-slate. tailwind-merge drops them and
+				    keeps the structural classes (h-5, min-w-5, centring, select-none).
+				    `font-[inherit]` also undoes Kbd's `font-sans`, which would be the
+				    only non-mono text on the page. */}
+				<KbdGroup aria-hidden="true" className="ml-2 hidden sm:inline-flex">
+					<Kbd className="border border-divider bg-transparent px-1.5 font-[inherit] text-[10px] text-mid">
+						Ctrl + `
+					</Kbd>
+				</KbdGroup>
 			</button>
 			<div
 				data-open={open || undefined}
