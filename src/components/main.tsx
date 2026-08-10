@@ -69,7 +69,7 @@ export function Main({
 				<p className="flex items-center gap-2">
 					<span className="text-subtle">~</span>
 					<span className="text-muted">/portfolio/</span>
-					{fileName(pathname)}
+					{fileName(pathname) ?? <span className="text-prompt">404</span>}
 				</p>
 				<p className="text-muted">READ-ONLY</p>
 			</div>
