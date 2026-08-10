@@ -1,7 +1,24 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, FolderGit2, Mail } from "lucide-react";
+import { absoluteUrl, canonical } from "#/site";
 
-export const Route = createFileRoute("/")({ component: Home });
+const TITLE = "Vladimir Aleksic — Full-Stack Engineer, frontend-focused";
+const DESCRIPTION =
+	"Full-stack engineer at Plainly in Novi Sad: I own the Plainly Videos dashboard and built PlainlyFlows from an empty repo to its launch.";
+
+export const Route = createFileRoute("/")({
+	head: () => ({
+		meta: [
+			{ title: TITLE },
+			{ name: "description", content: DESCRIPTION },
+			{ property: "og:title", content: TITLE },
+			{ property: "og:description", content: DESCRIPTION },
+			{ property: "og:url", content: absoluteUrl("/") },
+		],
+		links: [canonical("/")],
+	}),
+	component: Home,
+});
 
 const SHIPPING_SINCE = 2022;
 const yearsShipping = new Date().getFullYear() - SHIPPING_SINCE;

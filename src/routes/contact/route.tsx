@@ -16,8 +16,23 @@ import {
 	LOCATION,
 	TIME_ZONE,
 } from "#/data/contact";
+import { absoluteUrl, canonical } from "#/site";
+
+const TITLE = "Contact — Vladimir Aleksic";
+const DESCRIPTION =
+	"Email, GitHub, LinkedIn and my CV, plus where I am and what I'm up for: open to work, remote or Novi Sad.";
 
 export const Route = createFileRoute("/contact")({
+	head: () => ({
+		meta: [
+			{ title: TITLE },
+			{ name: "description", content: DESCRIPTION },
+			{ property: "og:title", content: TITLE },
+			{ property: "og:description", content: DESCRIPTION },
+			{ property: "og:url", content: absoluteUrl("/contact") },
+		],
+		links: [canonical("/contact")],
+	}),
 	component: RouteComponent,
 });
 

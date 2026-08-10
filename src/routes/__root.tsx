@@ -12,72 +12,124 @@ import { Footer } from "#/components/footer";
 import { Header } from "#/components/header";
 import { Main } from "#/components/main";
 import { SidebarLeft } from "#/components/sidebar-left";
+import { CONTACT } from "#/data/contact";
+import skills from "#/data/skills.json";
 import { files } from "#/files";
 import { SECURITY_HEADERS } from "#/security-headers";
+import { absoluteUrl, canonical } from "#/site";
 import { parseTabs, serializeTabs, TABS_STORAGE_KEY } from "#/tabs";
 import appCss from "../styles.css?url";
 
-// Scrapers only follow absolute image URLs, so the card image is emitted only
-// when the deploy origin is known (set VITE_SITE_URL at build time).
-const siteUrl = import.meta.env.VITE_SITE_URL?.replace(/\/$/, "");
+const TITLE = "Vladimir Aleksic — Full-Stack Engineer";
+
+// Every skill group flattened, minus `learning` — that one lists what I'm
+// picking up, which is not the same claim as knowing it.
+const knowsAbout = [
+	...new Set(
+		Object.entries(skills)
+			.filter(([group]) => group !== "learning")
+			.flatMap(([, value]) =>
+				Array.isArray(value) ? value : Object.values(value).flat(),
+			),
+	),
+];
+
+const HOME = absoluteUrl("/");
+const PERSON_ID = `${HOME}#person`;
+
+const person = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	"@id": PERSON_ID,
+	name: "Vladimir Aleksic",
+	url: HOME,
+	jobTitle: "Full-Stack Engineer",
+	address: {
+		"@type": "PostalAddress",
+		addressLocality: "Novi Sad",
+		addressCountry: "RS",
+	},
+	sameAs: CONTACT.filter((link) =>
+		["GITHUB", "LINKEDIN"].includes(link.label),
+	).map((link) => link.href),
+	knowsAbout,
+};
+
+const profilePage = {
+	"@context": "https://schema.org",
+	"@type": "ProfilePage",
+	"@id": `${HOME}#profile`,
+	url: HOME,
+	name: TITLE,
+	inLanguage: "en",
+	mainEntity: { "@id": PERSON_ID },
+};
 
 export const Route = createRootRoute({
 	headers: () => SECURITY_HEADERS,
-	head: () => ({
-		meta: [
-			{ charSet: "utf-8" },
-			{ name: "viewport", content: "width=device-width, initial-scale=1" },
-			{ title: "Vladimir Aleksic — Full-Stack Engineer" },
-			{
-				name: "description",
-				content:
-					"Full-stack engineer at Plainly, frontend-focused: I own the Plainly Videos dashboard, took PlainlyFlows from empty repo to launch, and maintain the Adobe ↔ Plainly After Effects plugin. TypeScript, React, TanStack, Node. Novi Sad, Serbia — open to work.",
-			},
-			{ name: "color-scheme", content: "dark" },
-			{ name: "theme-color", content: "#000000" },
-			{ property: "og:type", content: "website" },
-			{
-				property: "og:title",
-				content: "Vladimir Aleksic — Full-Stack Engineer",
-			},
-			{
-				property: "og:description",
-				content:
-					"Full-stack engineer at Plainly, frontend-focused. TypeScript, React, TanStack, Node. Novi Sad, Serbia — open to work.",
-			},
-			{ property: "og:site_name", content: "Vladimir Aleksic" },
-			{ property: "og:locale", content: "en_US" },
-			// Without an absolute image there is no large card to show, so the type
-			// tracks whether one was emitted at all.
-			{
-				name: "twitter:card",
-				content: siteUrl ? "summary_large_image" : "summary",
-			},
-			...(siteUrl
-				? [
-						{ property: "og:image", content: `${siteUrl}/og.png` },
-						{ property: "og:image:type", content: "image/png" },
-						{ property: "og:image:width", content: "1200" },
-						{ property: "og:image:height", content: "630" },
-						{
-							property: "og:image:alt",
-							content: "Vladimir Aleksic — portfolio",
-						},
-					]
-				: []),
-		],
-		links: [
-			{
-				rel: "stylesheet",
-				href: appCss,
-			},
-			{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-			// Legacy fallback for anything that will not take the SVG.
-			{ rel: "icon", href: "/favicon.ico", sizes: "48x48 32x32 16x16" },
-			{ rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
-			{ rel: "manifest", href: "/manifest.json" },
-		],
-	}),
+	head: ({ matches }) => {
+		// Head links are concatenated across matches and only collapse when
+		// identical, so the canonical follows the matched route here rather than
+		// pinning the site root and leaving every page with two of them.
+		const path = matches[matches.length - 1].fullPath;
+
+		return {
+			meta: [
+				{ charSet: "utf-8" },
+				{ name: "viewport", content: "width=device-width, initial-scale=1" },
+				{ title: TITLE },
+				{
+					name: "description",
+					content:
+						"Full-stack engineer at Plainly, frontend-focused: I own the Plainly Videos dashboard, took PlainlyFlows from empty repo to launch, and maintain the Adobe ↔ Plainly After Effects plugin. TypeScript, React, TanStack, Node. Novi Sad, Serbia — open to work.",
+				},
+				{ name: "author", content: "Vladimir Aleksic" },
+				{ name: "color-scheme", content: "dark" },
+				{ name: "theme-color", content: "#000000" },
+				{ property: "og:type", content: "website" },
+				{ property: "og:title", content: TITLE },
+				{
+					property: "og:description",
+					content:
+						"Full-stack engineer at Plainly, frontend-focused. TypeScript, React, TanStack, Node. Novi Sad, Serbia — open to work.",
+				},
+				{ property: "og:site_name", content: "Vladimir Aleksic" },
+				{ property: "og:locale", content: "en_US" },
+				{ property: "og:url", content: absoluteUrl(path) },
+				{ property: "og:image", content: absoluteUrl("/og.png") },
+				{ property: "og:image:type", content: "image/png" },
+				{ property: "og:image:width", content: "1200" },
+				{ property: "og:image:height", content: "630" },
+				{ property: "og:image:alt", content: TITLE },
+				{ name: "twitter:card", content: "summary_large_image" },
+			],
+			links: [
+				// Same-origin font preloads still need `crossorigin` to match the
+				// CSS request, or the file is fetched twice.
+				{
+					rel: "preload",
+					href: "/fonts/jetbrains-mono-latin.woff2",
+					as: "font",
+					type: "font/woff2",
+					crossOrigin: "anonymous",
+				},
+				{
+					rel: "stylesheet",
+					href: appCss,
+				},
+				{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+				// Legacy fallback for anything that will not take the SVG.
+				{ rel: "icon", href: "/favicon.ico", sizes: "48x48 32x32 16x16" },
+				{ rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+				{ rel: "manifest", href: "/manifest.json" },
+				canonical(path),
+			],
+			scripts: [
+				{ type: "application/ld+json", children: JSON.stringify(person) },
+				{ type: "application/ld+json", children: JSON.stringify(profilePage) },
+			],
+		};
+	},
 	notFoundComponent: NotFound,
 	shellComponent: RootDocument,
 });

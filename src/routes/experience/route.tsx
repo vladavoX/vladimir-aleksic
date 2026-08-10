@@ -1,7 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CornerDownRight } from "lucide-react";
+import { absoluteUrl, canonical } from "#/site";
+
+const TITLE = "Experience — Vladimir Aleksic";
+const DESCRIPTION =
+	"Career timeline: full-stack at Plainly since 2023, client work at Positive Tech before that, and a BSc from Singidunum University.";
 
 export const Route = createFileRoute("/experience")({
+	head: () => ({
+		meta: [
+			{ title: TITLE },
+			{ name: "description", content: DESCRIPTION },
+			{ property: "og:title", content: TITLE },
+			{ property: "og:description", content: DESCRIPTION },
+			{ property: "og:url", content: absoluteUrl("/experience") },
+		],
+		links: [canonical("/experience")],
+	}),
 	component: RouteComponent,
 });
 
@@ -158,6 +173,7 @@ const timeline = [
 function RouteComponent() {
 	return (
 		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
+			<h1 className="text-accent text-2xl">Career so far</h1>
 			<div className="border border-divider p-4 rounded-sm space-y-6">
 				<h2 className="text-accent">CAREER TIMELINE</h2>
 				<ul>

@@ -1,8 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { type Project, projects } from "#/data/projects";
+import { absoluteUrl, canonical } from "#/site";
+
+const TITLE = "Projects — Vladimir Aleksic";
+const DESCRIPTION =
+	"Open source I maintain — the Plainly After Effects plugin, an MCP server, CEP-reload — plus willitspam.com, which I shipped solo.";
 
 export const Route = createFileRoute("/projects")({
+	head: () => ({
+		meta: [
+			{ title: TITLE },
+			{ name: "description", content: DESCRIPTION },
+			{ property: "og:title", content: TITLE },
+			{ property: "og:description", content: DESCRIPTION },
+			{ property: "og:url", content: absoluteUrl("/projects") },
+		],
+		links: [canonical("/projects")],
+	}),
 	component: RouteComponent,
 });
 

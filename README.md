@@ -60,12 +60,25 @@ are rendered by the Worker, so they get the same headers from
 and fails if the two lists drift apart. There is no Content-Security-Policy yet:
 Start injects inline scripts, so an enforcing policy needs nonce plumbing first.
 
-### `VITE_SITE_URL`
+## SEO
 
-Optional, build-time. Set it to the deploy origin (e.g.
-`https://vladimiraleksic.dev`) and the root route emits an absolute Open Graph
-image URL. Left unset, the tag is omitted rather than pointing at the wrong
-host.
+`src/site.ts` holds `SITE_URL` — the public origin, hard-coded, no trailing
+slash — and the helpers that build absolute URLs from it. Canonical, Open Graph
+and JSON-LD tags all need absolute URLs, so the origin is a constant rather than
+a build-time env var that nothing sets.
+
+Each route's `head()` owns its own title, description and canonical; the root
+owns the site-wide tags, the card image and the `Person` / `ProfilePage`
+JSON-LD. `public/sitemap.xml` is hand-written and guarded by
+`src/sitemap.test.ts`, which fails if a route in `src/files.tsx` is missing from
+it.
+
+## Fonts
+
+JetBrains Mono is self-hosted from `public/fonts/` — the latin subset of the
+variable roman face, declared in `src/styles.css` and preloaded from the root
+route. Nothing in the app is italic, so the italic face is not shipped. The font
+is OFL-1.1; `public/fonts/OFL.txt` is the licence.
 
 ## Content
 
