@@ -145,26 +145,25 @@ export function Terminal() {
 		}
 	};
 
-	// Shared by the header button and the Ctrl+`/Cmd+J shortcut. A functional
-	// update (rather than reading `open` from the closure) keeps this stable
-	// across renders so the keydown listener below doesn't need to re-attach
-	// on every keystroke.
+	// Shared by the header button and the Ctrl+`/Cmd+J shortcut, so the
+	// open-and-focus / close-and-move-focus behavior lives in one place.
+	// The side effects run after `setOpen`, not inside its updater — React
+	// (and the React Compiler this repo builds with) requires updaters to
+	// be pure and is entitled to call one more than once per update.
 	const toggleOpen = useCallback(() => {
-		setOpen((prev) => {
-			const next = !prev;
-			if (next) {
-				requestAnimationFrame(() => {
-					inputRef.current?.focus();
-					scrollToBottom();
-				});
-			} else if (bodyRef.current?.contains(document.activeElement)) {
-				// Same inert-focus trap as Escape below: move focus out before
-				// the panel collapses and becomes `inert`.
-				toggleButtonRef.current?.focus();
-			}
-			return next;
-		});
-	}, [scrollToBottom]);
+		const next = !open;
+		setOpen(next);
+		if (next) {
+			requestAnimationFrame(() => {
+				inputRef.current?.focus();
+				scrollToBottom();
+			});
+		} else if (bodyRef.current?.contains(document.activeElement)) {
+			// Same inert-focus trap as Escape below: move focus out before
+			// the panel collapses and becomes `inert`.
+			toggleButtonRef.current?.focus();
+		}
+	}, [open, scrollToBottom]);
 
 	// Routes through the command engine rather than clearing `lines` directly,
 	// so there is one code path for "clear" whether it's typed or shortcut-triggered.
