@@ -132,18 +132,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	// Intentionally once: this restores whatever was on disk at mount, not
 	// on every pathname change (the effect above already keeps the current
 	// route's tab open on navigation).
-	// biome-ignore lint/correctness/useExhaustiveDependencies: mount-only restore, pathname read once
+	//
+	// Merged into the existing set rather than replacing it, so the tab the
+	// initializer already sanitized (a real file route, or "/" when the URL
+	// is a 404) survives — appending the raw pathname here would open a
+	// nameless tab for an unknown URL.
 	useEffect(() => {
 		try {
-			if (typeof window === "undefined") return;
 			const stored = parseTabs(
 				window.localStorage.getItem(TABS_STORAGE_KEY),
 				files.map((file) => file.to),
 			);
 			if (stored.length === 0) return;
-			setActiveTabs(
-				new Set(stored.includes(pathname) ? stored : [...stored, pathname]),
-			);
+			setActiveTabs((prev) => new Set([...stored, ...prev]));
 		} catch {
 			// Safari private mode (and friends) throws on localStorage.getItem
 			// too, not only on writes — fall back to the URL-only tab silently.
@@ -164,7 +165,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			return;
 		}
 		try {
-			if (typeof window === "undefined") return;
 			window.localStorage.setItem(TABS_STORAGE_KEY, serializeTabs(activeTabs));
 		} catch {
 			// Storage inaccessible — tabs just won't persist this session.
