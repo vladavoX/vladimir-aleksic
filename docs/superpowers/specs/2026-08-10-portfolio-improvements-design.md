@@ -128,10 +128,15 @@ defines `head()`.
   fetch 404s and the badge stays in its unknown state, which is the honest
   rendering. It starts working on its own if the repo becomes public. No
   credential is ever sent from the client.
-- **404 status.** The not-found route serves HTTP 200. `notFoundComponent` does
-  not set a status by itself. Spike how TanStack Start sets it; if there is no
-  clean mechanism, leave the code alone and say so in the PR body rather than
-  forcing it.
+- **404 status.** ~~The not-found route serves HTTP 200.~~ **Wrong — this was
+  never broken.** The design asserted a 200 without measuring it. An unknown
+  path already answers `HTTP/1.1 404 Not Found` with the 404 page body, in both
+  `pnpm dev` and `pnpm preview`, while `/` stays 200. `router-core`'s
+  `applyFailure` returns `status: 404` for a not-found boundary and
+  `renderRouterToStream` uses it. `setResponseStatus` does exist in the
+  installed `@tanstack/start-server-core` but would have been the wrong tool
+  anyway: h3's `prepareResponse` ignores `event.res.status` when the handler
+  returns a `Response`, which SSR always does. No code change.
 - **Response headers** on the Worker: `Referrer-Policy`,
   `X-Content-Type-Options`, `X-Frame-Options`, `Permissions-Policy`. CSP is
   deferred or shipped report-only — TanStack Start injects inline scripts, so
