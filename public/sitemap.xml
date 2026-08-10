@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Hand-written; src/sitemap.test.ts fails if a route in src/files.tsx is missing here. -->
+<!-- Hand-written; src/sitemap.test.ts fails if a route in src/routes is missing here. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://vladimir-aleksic.vladavox.workers.dev/</loc>

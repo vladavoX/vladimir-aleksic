@@ -3,6 +3,7 @@ import {
 	createRootRoute,
 	HeadContent,
 	Link,
+	rootRouteId,
 	Scripts,
 	useLocation,
 } from "@tanstack/react-router";
@@ -71,7 +72,14 @@ export const Route = createRootRoute({
 		// Head links are concatenated across matches and only collapse when
 		// identical, so the canonical follows the matched route here rather than
 		// pinning the site root and leaving every page with two of them.
-		const path = matches[matches.length - 1].fullPath;
+		const leaf = matches[matches.length - 1];
+		const path = leaf.fullPath;
+		// Nothing matched: the leaf is the root itself and its `fullPath` is "/".
+		// A self-canonical is impossible here, and pointing one at the home page
+		// would tell crawlers every unknown URL is a duplicate of it, so the 404
+		// gets no canonical and no `og:url` at all.
+		const isNotFound = leaf.routeId === rootRouteId;
+		const isHome = !isNotFound && absoluteUrl(path) === HOME;
 
 		return {
 			meta: [
@@ -95,7 +103,12 @@ export const Route = createRootRoute({
 				},
 				{ property: "og:site_name", content: "Vladimir Aleksic" },
 				{ property: "og:locale", content: "en_US" },
-				{ property: "og:url", content: absoluteUrl(path) },
+				...(isNotFound
+					? []
+					: [{ property: "og:url", content: absoluteUrl(path) }]),
+				// Must be a file that actually exists in `public/` — a 404 here is a
+				// blank card everywhere the site is shared. `public/og.png` is the
+				// 1200×630 card `scripts/icons.mjs` generates, hence the large card.
 				{ property: "og:image", content: absoluteUrl("/og.png") },
 				{ property: "og:image:type", content: "image/png" },
 				{ property: "og:image:width", content: "1200" },
@@ -122,11 +135,20 @@ export const Route = createRootRoute({
 				{ rel: "icon", href: "/favicon.ico", sizes: "48x48 32x32 16x16" },
 				{ rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
 				{ rel: "manifest", href: "/manifest.json" },
-				canonical(path),
+				...(isNotFound ? [] : [canonical(path)]),
 			],
 			scripts: [
 				{ type: "application/ld+json", children: JSON.stringify(person) },
-				{ type: "application/ld+json", children: JSON.stringify(profilePage) },
+				// The ProfilePage node is keyed to the home page, so it belongs only
+				// on the document it describes.
+				...(isHome
+					? [
+							{
+								type: "application/ld+json",
+								children: JSON.stringify(profilePage),
+							},
+						]
+					: []),
 			],
 		};
 	},

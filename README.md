@@ -70,8 +70,8 @@ a build-time env var that nothing sets.
 Each route's `head()` owns its own title, description and canonical; the root
 owns the site-wide tags, the card image and the `Person` / `ProfilePage`
 JSON-LD. `public/sitemap.xml` is hand-written and guarded by
-`src/sitemap.test.ts`, which fails if a route in `src/files.tsx` is missing from
-it.
+`src/sitemap.test.ts`, which fails if a route in `src/routes` is missing from it,
+or if `public/robots.txt` stops pointing at the sitemap on `SITE_URL`.
 
 ## Fonts
 
