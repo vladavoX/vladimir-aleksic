@@ -50,6 +50,15 @@ The Worker is named `vladimir-aleksic` in `wrangler.jsonc`. The footer's branch
 indicator is baked in at build time from `CF_PAGES_BRANCH` / `WORKERS_CI_BRANCH`
 or local git — see `gitBranch()` in `vite.config.ts`.
 
+### Response headers
+
+Two surfaces, so two places. Static assets are served by Cloudflare's assets
+binding before the Worker runs — `public/_headers` covers those. SSR documents
+are rendered by the Worker, so they get the same headers from the root route's
+`headers()` in `src/routes/__root.tsx`. Keep the two lists in step. There is no
+Content-Security-Policy yet: Start injects inline scripts, so an enforcing
+policy needs nonce plumbing first.
+
 ### `VITE_SITE_URL`
 
 Optional, build-time. Set it to the deploy origin (e.g.
@@ -113,11 +122,13 @@ Mono from Google Fonts, so open it in a browser to preview before regenerating.
 
 `src/terminal-commands.ts` is a pure command engine — input plus a context
 (files, clock, identity, contact) in, output lines plus an optional effect
-(`clear` / `navigate`) out — so it is unit-tested without a DOM. The React shell
-in `src/components/terminal.tsx` owns history, Tab completion and scrolling.
+(`clear` / `navigate` / `open-url`) out — so it is unit-tested without a DOM. The
+React shell in `src/components/terminal.tsx` owns history, Tab completion and
+scrolling.
 
-Commands: `help`, `ls`, `cd` / `open`, `whoami`, `contact`, `echo`, `date`,
-`clear`, `theme`. Tab completes commands and file arguments, ↑/↓ walks history.
+Commands: `help`, `ls`, `pwd`, `cd` / `open`, `whoami`, `contact`, `cv`, `echo`,
+`date`, `clear`, `theme`. Tab completes commands and file arguments, ↑/↓ walks
+history.
 
 `src/keybindings.ts` is the same idea applied to the panel itself: a pure
 `event -> action` mapping, tested without a DOM. Shortcuts, VS Code-style:
