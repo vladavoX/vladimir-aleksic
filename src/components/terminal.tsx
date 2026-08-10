@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Kbd, KbdGroup } from "#/components/ui/kbd";
 import { CONTACT } from "#/data/contact";
 import { files } from "#/files";
 import { matchShortcut } from "#/keybindings";
@@ -227,13 +228,21 @@ export function Terminal() {
 					<ChevronRight className="size-3" />
 				)}
 				TERMINAL
-				{/* Hidden on narrow screens, where the hint is noise next to the label. */}
-				<span
-					aria-hidden="true"
-					className="ml-auto hidden text-muted sm:inline"
-				>
-					⌃`
-				</span>
+				{/* Hidden on narrow screens, where the hint is noise next to the label.
+				    Spelled `Ctrl` rather than U+2303, which the latin font subset the
+				    site serves does not carry.
+				    The palette is overridden because shadcn's Kbd assumes `muted` is a
+				    surface with `muted-foreground` on top; here `muted` is a dim text
+				    colour used in 22 other places and `muted-foreground` is undefined,
+				    so the defaults render green-on-slate. tailwind-merge drops them and
+				    keeps the structural classes (h-5, min-w-5, centring, select-none).
+				    `font-[inherit]` also undoes Kbd's `font-sans`, which would be the
+				    only non-mono text on the page. */}
+				<KbdGroup aria-hidden="true" className="ml-2 hidden sm:inline-flex">
+					<Kbd className="border border-divider bg-transparent px-1.5 font-[inherit] text-[10px] text-mid">
+						Ctrl + `
+					</Kbd>
+				</KbdGroup>
 			</button>
 			<div
 				data-open={open || undefined}
