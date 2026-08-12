@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Hand-written; src/sitemap.test.ts fails if a route in src/routes is missing here. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://vladimir-aleksic.vladavox.workers.dev/</loc>
+  </url>
+  <url>
+    <loc>https://vladimir-aleksic.vladavox.workers.dev/skills</loc>
+  </url>
+  <url>
+    <loc>https://vladimir-aleksic.vladavox.workers.dev/experience</loc>
+  </url>
+  <url>
+    <loc>https://vladimir-aleksic.vladavox.workers.dev/projects</loc>
+  </url>
+  <url>
+    <loc>https://vladimir-aleksic.vladavox.workers.dev/contact</loc>
+  </url>
+  <url>
+    <loc>https://vladimir-aleksic.vladavox.workers.dev/cv.html</loc>
+  </url>
+</urlset>
