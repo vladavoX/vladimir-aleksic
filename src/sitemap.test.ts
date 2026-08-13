@@ -33,8 +33,10 @@ describe("sitemap.xml", () => {
 		}
 	});
 
+	// `/cv`, not `/cv.html`: Workers assets strips the extension and 307s
+	// `/cv.html` to `/cv`, so the bare path is the URL crawlers should be given.
 	it("lists nothing beyond those routes and the CV", () => {
-		const expected = [...routePaths.map(absoluteUrl), absoluteUrl("/cv.html")];
+		const expected = [...routePaths.map(absoluteUrl), absoluteUrl("/cv")];
 		expect([...locs].sort()).toEqual([...expected].sort());
 	});
 
