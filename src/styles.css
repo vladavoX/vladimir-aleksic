@@ -19,10 +19,20 @@
   --color-host: var(--color-cyan-300);
   --color-accent: oklch(64% 0.15 151);
   --color-accent-border: oklch(44% 0.12 151);
-  --color-muted: var(--color-gray-600);
-  --color-mid: var(--color-gray-500);
+  /* Text tones are tuned to clear WCAG AA (4.5:1) at text-xs on the content
+     surface, not just on black. The stock gray-600/gray-500 and the
+     border-green read at 2.4–3.7:1 there. */
+  --color-accent-dim: oklch(60% 0.12 151);
+  --color-muted: oklch(60% 0.027 262);
+  --color-mid: oklch(65% 0.025 262);
   --color-subtle: var(--color-gray-400);
   --color-divider: var(--color-gray-800);
+  /* The editor pane background — the old gray-600 at 10%, pinned so that
+     brightening `muted` text does not also lift the surface. */
+  --color-surface: color-mix(in oklab, var(--color-gray-600) 10%, transparent);
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 * {
@@ -40,6 +50,9 @@ body,
 body {
   margin: 0;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
+  /* Pressables carry their own :active state; the grey iOS flash on top of
+     it reads as a second, unstyled one. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::selection {

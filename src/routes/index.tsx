@@ -84,7 +84,7 @@ const quickStats = [
 
 function Home() {
 	return (
-		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
+		<div className="bg-surface flex-1 *:mx-auto *:w-full *:max-w-5xl p-4 md:p-8 flex flex-col gap-6">
 			<div className="space-y-2">
 				<h1 className="text-accent text-2xl">Vladimir Aleksic</h1>
 				<p className="text-subtle text-sm">
@@ -106,7 +106,7 @@ function Home() {
 			</div>
 			<div className="space-y-2">
 				{paragraphs.map((text) => (
-					<p key={text} className="text-sm xl:max-w-2/3">
+					<p key={text} className="text-sm leading-relaxed max-w-[72ch]">
 						{text}
 					</p>
 				))}
@@ -114,7 +114,7 @@ function Home() {
 			<div className="flex flex-wrap items-center gap-2">
 				<Link
 					to="/contact"
-					className="inline-flex items-center gap-2 rounded-sm border border-accent-border bg-accent/10 px-3 py-2 text-accent transition-colors hover:bg-accent/20"
+					className="inline-flex items-center gap-2 rounded-sm border border-accent-border bg-accent/10 px-3 py-2 text-accent transition-[background-color,scale] duration-150 ease-out hover:bg-accent/20 active:scale-[0.97]"
 				>
 					<Mail className="size-3.5" />
 					open contact.md
@@ -122,14 +122,19 @@ function Home() {
 				</Link>
 				<Link
 					to="/projects"
-					className="inline-flex items-center gap-2 rounded-sm border border-divider px-3 py-2 text-subtle transition-colors hover:border-accent-border hover:text-accent"
+					className="inline-flex items-center gap-2 rounded-sm border border-divider px-3 py-2 text-subtle transition-[color,border-color,scale] duration-150 ease-out hover:border-accent-border hover:text-accent active:scale-[0.97]"
 				>
 					<FolderGit2 className="size-3.5" />
 					projects.md
 				</Link>
 			</div>
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">BY THE NUMBERS</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					BY THE NUMBERS
+				</h2>
 				<div className="grid lg:grid-cols-2 gap-2">
 					{stats.map((stat) => (
 						<div
@@ -141,20 +146,25 @@ function Home() {
 								{stat.value}
 								<span className="text-subtle text-sm"> {stat.valueSuffix}</span>
 							</p>
-							<p className="text-xs text-accent-border">{stat.caption}</p>
+							<p className="text-xs text-accent-dim">{stat.caption}</p>
 						</div>
 					))}
 				</div>
 			</div>
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">QUICK STATS</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					QUICK STATS
+				</h2>
 				<div className="grid lg:grid-cols-2 gap-2">
 					{quickStats.map((stat) => (
 						<div
 							key={stat.label}
 							className="p-4 bg-black rounded-sm border border-divider flex flex-col gap-2"
 						>
-							<p className="text-xs text-accent-border">{stat.label}</p>
+							<p className="text-xs text-accent-dim">{stat.label}</p>
 							<p className="">{stat.value}</p>
 						</div>
 					))}

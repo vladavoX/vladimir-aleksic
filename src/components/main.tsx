@@ -37,30 +37,29 @@ export function Main({
 			<div className="border-b border-divider shrink-0">
 				<ul className="flex items-center overflow-auto">
 					{[...activeTabs].map((tab) => (
-						<li key={tab} className="h-8 flex items-center">
+						// The tab chrome lives on the <li> so the close button can be a
+						// sibling of the link — a <button> inside an <a> is invalid HTML
+						// and both screen readers and keyboard focus trip over it.
+						<li
+							key={tab}
+							className="flex h-8 shrink-0 items-center border-b border-transparent hover:border-divider has-[a[aria-current=page]]:border-accent has-[a[aria-current=page]]:bg-accent/10"
+						>
 							<Link
 								to={tab}
-								activeProps={{ className: "border-accent bg-accent/10" }}
-								inactiveProps={{
-									className: "border-transparent hover:border-divider",
-								}}
-								className="h-full w-full py-2 px-4 border-b flex items-center justify-between"
+								className={`flex h-full items-center pl-4 ${activeTabs.size > 1 ? "pr-1" : "pr-4"}`}
 							>
 								{fileName(tab)}
-								{activeTabs.size > 1 && (
-									<button
-										type="button"
-										onClick={(e) => {
-											e.preventDefault();
-											handleTabRemoval(tab);
-										}}
-										className="ml-2 cursor-pointer text-muted hover:text-white/70 transition-colors"
-									>
-										<span className="sr-only">Close tab</span>
-										<XIcon className="size-3" />
-									</button>
-								)}
 							</Link>
+							{activeTabs.size > 1 && (
+								<button
+									type="button"
+									onClick={() => handleTabRemoval(tab)}
+									className="mr-2.5 cursor-pointer rounded-sm p-1 text-muted transition-colors hover:bg-white/5 hover:text-white/70"
+								>
+									<span className="sr-only">Close {fileName(tab)}</span>
+									<XIcon className="size-3" />
+								</button>
+							)}
 						</li>
 					))}
 				</ul>

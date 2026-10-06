@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
 import { files } from "#/files";
 
 export function SidebarLeft({
@@ -18,11 +17,11 @@ export function SidebarLeft({
 				aria-label="Close menu"
 				onClick={onClose}
 				data-open={isOpen || undefined}
-				className="md:hidden fixed top-8.25 bottom-0 inset-x-0 z-40 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-200 data-open:opacity-100 data-open:pointer-events-auto"
+				className="md:hidden fixed top-8.25 bottom-0 inset-x-0 z-40 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 ease-drawer data-open:opacity-100 data-open:pointer-events-auto"
 			/>
 			<aside
 				data-open={isOpen || undefined}
-				className="[grid-area:sidebar] border-r border-divider bg-black fixed top-8.25 bottom-0 left-0 z-50 w-72 -translate-x-full transition-transform duration-200 data-open:translate-x-0 md:static md:w-auto md:translate-x-0"
+				className="[grid-area:sidebar] border-r border-divider bg-black fixed top-8.25 bottom-0 left-0 z-50 w-72 -translate-x-full transition-transform duration-300 ease-drawer data-open:translate-x-0 md:static md:w-auto md:translate-x-0"
 			>
 				<div className="space-y-4 border-b border-divider p-4">
 					<div className="flex items-start gap-4">
@@ -59,11 +58,8 @@ export function SidebarLeft({
 									inactiveProps={{
 										className: "hover:bg-white/5 group border-transparent",
 									}}
-									className="flex items-center w-full h-full py-2 px-4 border-l"
+									className="flex items-center w-full h-full py-2 pl-8 pr-4 border-l"
 								>
-									<div className="w-4">
-										<ChevronRight className="size-3" />
-									</div>
 									<span className="flex items-center justify-center w-6 text-mid mr-2">
 										{file.icon}
 									</span>

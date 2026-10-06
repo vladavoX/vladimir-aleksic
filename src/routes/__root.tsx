@@ -160,7 +160,7 @@ function NotFound() {
 	const pathname = useLocation({ select: (location) => location.pathname });
 
 	return (
-		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
+		<div className="bg-surface flex-1 *:mx-auto *:w-full *:max-w-5xl p-4 md:p-8 flex flex-col gap-6">
 			<div className="space-y-2">
 				<h1 className="text-accent text-2xl">404 — no such file</h1>
 				<p className="text-subtle text-sm">
@@ -168,8 +168,13 @@ function NotFound() {
 					directory
 				</p>
 			</div>
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">FILES IN ~/portfolio</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					FILES IN ~/portfolio
+				</h2>
 				<ul className="space-y-2">
 					{files.map((file) => (
 						<li key={file.to}>
@@ -177,7 +182,7 @@ function NotFound() {
 								to={file.to}
 								className="flex items-center gap-3 rounded-sm border border-divider bg-black p-3 text-host underline-offset-2 hover:underline"
 							>
-								<span className="flex w-4 shrink-0 justify-center text-accent-border">
+								<span className="flex w-4 shrink-0 justify-center text-accent-dim">
 									{file.icon}
 								</span>
 								{file.name}
@@ -263,7 +268,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<div className="grid grid-cols-[1fr] md:grid-cols-[18rem_1fr] grid-rows-[auto_1fr_auto] h-screen overflow-hidden [grid-template-areas:'header''main''footer'] md:[grid-template-areas:'header_header''sidebar_main''footer_footer'] text-xs text-white/70">
+				<div className="grid grid-cols-[1fr] md:grid-cols-[18rem_1fr] grid-rows-[auto_1fr_auto] h-dvh overflow-hidden [grid-template-areas:'header''main''footer'] md:[grid-template-areas:'header_header''sidebar_main''footer_footer'] text-xs text-white/70">
 					<Header onMenuClick={() => setIsSidebarOpen((o) => !o)} />
 					<SidebarLeft
 						setActiveTabs={setActiveTabs}

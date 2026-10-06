@@ -89,14 +89,20 @@ function CopyButton({ value }: { value: string }) {
 		<button
 			type="button"
 			onClick={copy}
-			className="shrink-0 cursor-pointer p-1 text-muted transition-colors hover:text-accent"
+			data-copied={copied || undefined}
+			className="group/copy grid shrink-0 cursor-pointer p-1 text-muted transition-[color,scale] duration-150 ease-out hover:text-accent active:scale-[0.97]"
 		>
 			<span className="sr-only">{copied ? "Copied" : `Copy ${value}`}</span>
-			{copied ? (
-				<Check className="size-3.5 text-accent" />
-			) : (
-				<Copy className="size-3.5" />
-			)}
+			{/* Both glyphs stay mounted in one grid cell and crossfade, so the swap
+			    reads as one icon changing state rather than two trading places. */}
+			<Copy
+				aria-hidden="true"
+				className="size-3.5 [grid-area:1/1] transition-[opacity,scale,filter] duration-200 ease-out-strong group-data-copied/copy:scale-50 group-data-copied/copy:opacity-0 group-data-copied/copy:blur-[2px]"
+			/>
+			<Check
+				aria-hidden="true"
+				className="size-3.5 [grid-area:1/1] scale-50 text-accent opacity-0 blur-[2px] transition-[opacity,scale,filter] duration-200 ease-out-strong group-data-copied/copy:scale-100 group-data-copied/copy:opacity-100 group-data-copied/copy:blur-[0px]"
+			/>
 		</button>
 	);
 }
@@ -108,7 +114,7 @@ function ContactRow({ link }: { link: ContactLink }) {
 	// truncating — the address is the whole point of the row.
 	return (
 		<div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-sm border border-divider bg-black p-3">
-			<span className="flex w-4 shrink-0 justify-center text-accent-border">
+			<span className="flex w-4 shrink-0 justify-center text-accent-dim">
 				{icons[link.label]}
 			</span>
 			<span className="w-20 shrink-0 text-xs text-muted">{link.label}</span>
@@ -141,19 +147,24 @@ function RouteComponent() {
 	];
 
 	return (
-		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
+		<div className="bg-surface flex-1 *:mx-auto *:w-full *:max-w-5xl p-4 md:p-8 flex flex-col gap-6">
 			<div className="space-y-2">
 				<h1 className="text-accent text-2xl">Get in touch</h1>
-				<p className="text-subtle text-sm xl:max-w-2/3">
+				<p className="text-subtle text-sm max-w-[72ch]">
 					Email is the fastest route — I read everything and answer real
 					messages. Hiring, contract work, or a question about the After Effects
 					plugin all land in the same inbox.
 				</p>
 			</div>
 
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">REACH OUT</h2>
-				<div className="space-y-2">
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					REACH OUT
+				</h2>
+				<div className="grid gap-2 xl:grid-cols-2">
 					{CONTACT.map((link) => (
 						<ContactRow key={link.label} link={link} />
 					))}
@@ -164,15 +175,20 @@ function RouteComponent() {
 				</p>
 			</div>
 
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">STATUS</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					STATUS
+				</h2>
 				<div className="grid lg:grid-cols-2 gap-2">
 					{status.map((item) => (
 						<div
 							key={item.label}
 							className="p-4 bg-black rounded-sm border border-divider flex flex-col gap-2"
 						>
-							<p className="text-xs text-accent-border">{item.label}</p>
+							<p className="text-xs text-accent-dim">{item.label}</p>
 							<p suppressHydrationWarning>{item.value}</p>
 						</div>
 					))}

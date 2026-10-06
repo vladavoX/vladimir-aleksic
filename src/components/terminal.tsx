@@ -278,7 +278,7 @@ export function Terminal() {
 			    guarantee rather than an argument. */}
 			<div
 				inert={open === false}
-				className="h-0 overflow-hidden transition-[height] duration-200 group-data-open:h-48 group-data-undecided:transition-none group-data-undecided:sm:h-48"
+				className="h-0 overflow-hidden transition-[height] duration-200 ease-out-strong group-data-open:h-48 group-data-undecided:transition-none group-data-undecided:sm:h-48"
 			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
 					{lines.map((line) => {
