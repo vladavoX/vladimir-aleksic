@@ -272,13 +272,11 @@ export function Terminal() {
 					</Kbd>
 				</KbdGroup>
 			</button>
-			{/* `transition-none` while undecided so the handover from the media
-			    query to `data-open` cannot animate. The two agree on height at
-			    every width, so there is nothing to animate — this makes that a
-			    guarantee rather than an argument. */}
+			{/* No open/close animation: the panel is a keyboard toggle (Ctrl+`),
+			    and animating `height` would reflow the editor pane every frame. */}
 			<div
 				inert={open === false}
-				className="h-0 overflow-hidden transition-[height] duration-200 group-data-open:h-48 group-data-undecided:transition-none group-data-undecided:sm:h-48"
+				className="h-0 overflow-hidden group-data-open:h-48 group-data-undecided:sm:h-48"
 			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
 					{lines.map((line) => {
@@ -315,7 +313,10 @@ export function Terminal() {
 							</p>
 						);
 					})}
-					<div className="flex items-center gap-2">
+					{/* 16px on touch: iOS zooms into any input under 16px on focus and
+					    never zooms back out. The prompt scales with it so the row
+					    still reads as one line. */}
+					<div className="flex items-center gap-2 pointer-coarse:text-base">
 						<span className="shrink-0 text-accent">{PROMPT}</span>
 						<input
 							ref={inputRef}
@@ -324,6 +325,11 @@ export function Terminal() {
 							onKeyDown={onKeyDown}
 							spellCheck={false}
 							autoComplete="off"
+							// Commands are case-sensitive, and iOS would otherwise send
+							// "Help" for "help".
+							autoCapitalize="none"
+							autoCorrect="off"
+							enterKeyHint="go"
 							aria-label="Terminal input"
 							className="flex-1 bg-transparent outline-none"
 						/>

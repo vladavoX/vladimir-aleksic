@@ -44,7 +44,6 @@ const timeline = [
 		period: "Nov 2023 — Present",
 		title: "Full-Stack Engineer · frontend-focused",
 		company: "Plainly",
-		active: true,
 		context:
 			"Video automation, remote. Small team — three of us on engineering — and the platform renders somewhere around 300,000 videos a month.",
 		points: [
@@ -129,7 +128,6 @@ const timeline = [
 		period: "Nov 2022 — Nov 2023",
 		title: "Full-Stack Developer",
 		company: "Positive Tech",
-		active: false,
 		context: "Software outsourcing, Novi Sad.",
 		points: [
 			{
@@ -157,7 +155,6 @@ const timeline = [
 		period: "Oct 2022 — Nov 2022",
 		title: "Full Stack JavaScript Developer",
 		company: "Levi9 Technology Services",
-		active: false,
 		context: "Internship, Novi Sad.",
 		points: [
 			{ id: "stack", body: "TypeScript, Node.js and JavaScript." },
@@ -172,10 +169,15 @@ const timeline = [
 
 function RouteComponent() {
 	return (
-		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
+		<div className="bg-surface flex-1 *:mx-auto *:w-full *:max-w-5xl p-4 md:p-8 flex flex-col gap-6">
 			<h1 className="text-accent text-2xl">Career so far</h1>
-			<div className="border border-divider p-4 rounded-sm space-y-6">
-				<h2 className="text-accent">CAREER TIMELINE</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					CAREER TIMELINE
+				</h2>
 				<ul>
 					{timeline.map((item, i) => {
 						const isLast = i === timeline.length - 1;
@@ -195,9 +197,6 @@ function RouteComponent() {
 										<span className="absolute left-1/2 top-2 bottom-0 w-px -translate-x-1/2 bg-divider" />
 									)}
 									<span className="relative mt-1 flex size-2">
-										{item.active && (
-											<span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-										)}
 										<span className="relative inline-flex size-2 rounded-full bg-accent" />
 									</span>
 								</div>
@@ -213,13 +212,13 @@ function RouteComponent() {
 										<span className="text-muted">@</span>{" "}
 										<span className="text-host">{item.company}</span>
 									</p>
-									<p className="mt-1 text-xs text-subtle xl:max-w-2/3">
+									<p className="mt-1 text-xs text-subtle max-w-[72ch]">
 										{item.context}
 									</p>
 									<ul className="mt-2 space-y-1 text-xs text-white">
 										{item.points.map((point) => (
 											<li key={point.id} className="flex gap-2">
-												<CornerDownRight className="mt-0.5 size-3 shrink-0 text-accent-border" />
+												<CornerDownRight className="mt-0.5 size-3 shrink-0 text-accent-dim" />
 												<span>{point.body}</span>
 											</li>
 										))}
@@ -240,8 +239,13 @@ function RouteComponent() {
 					})}
 				</ul>
 			</div>
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">EDUCATION</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					EDUCATION
+				</h2>
 				<div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-sm border border-divider bg-black p-4">
 					<p className="text-sm">
 						<span className="text-accent">

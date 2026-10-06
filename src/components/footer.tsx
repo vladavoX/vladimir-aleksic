@@ -133,7 +133,7 @@ export function Footer() {
 					{FONT}
 				</span>
 				<span
-					className="flex items-center px-3 text-host/80 tabular-nums"
+					className="flex items-center border-l border-divider px-3 text-host/80 tabular-nums"
 					suppressHydrationWarning
 				>
 					{now}

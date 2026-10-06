@@ -52,7 +52,7 @@ function ProjectCard({ project }: { project: Project }) {
 					{kindLabel[project.kind]}
 				</span>
 			</div>
-			<p className="text-xs text-white xl:max-w-2/3">{project.description}</p>
+			<p className="text-xs text-white max-w-[72ch]">{project.description}</p>
 			<div className="flex flex-wrap gap-1.5">
 				{project.stack.map((tech) => (
 					<span
@@ -69,15 +69,20 @@ function ProjectCard({ project }: { project: Project }) {
 
 function RouteComponent() {
 	return (
-		<div className="bg-muted/10 flex-1 p-4 md:p-8 flex flex-col gap-6">
+		<div className="bg-surface flex-1 *:mx-auto *:w-full *:max-w-5xl p-4 md:p-8 flex flex-col gap-6">
 			<div className="space-y-2">
 				<h1 className="text-accent text-2xl">Things I build in the open</h1>
-				<p className="text-subtle text-sm xl:max-w-2/3">
+				<p className="text-subtle text-sm max-w-[72ch]">
 					Plugins and tooling I maintain, and side products I shipped solo.
 				</p>
 			</div>
-			<div className="border border-divider p-4 rounded-sm space-y-4">
-				<h2 className="text-accent">OPEN SOURCE &amp; SIDE PROJECTS</h2>
+			<div className="space-y-3 pt-2">
+				<h2 className="text-accent">
+					<span aria-hidden="true" className="text-muted">
+						##{" "}
+					</span>
+					OPEN SOURCE &amp; SIDE PROJECTS
+				</h2>
 				<ul className="space-y-2">
 					{projects.map((project) => (
 						<ProjectCard key={project.name} project={project} />

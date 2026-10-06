@@ -23,7 +23,7 @@ export const Route = createFileRoute("/skills")({
 
 function RouteComponent() {
 	return (
-		<div className="bg-muted/10 flex-1 px-4 md:px-8 pt-4 md:pt-8 space-y-2">
+		<div className="bg-surface flex-1 px-4 md:px-8 pt-4 md:pt-8 space-y-2">
 			<h1 className="text-accent text-2xl">What I work with</h1>
 			<JsonViewer value={skills} />
 		</div>
