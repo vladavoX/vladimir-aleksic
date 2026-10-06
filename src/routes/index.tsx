@@ -114,7 +114,7 @@ function Home() {
 			<div className="flex flex-wrap items-center gap-2">
 				<Link
 					to="/contact"
-					className="inline-flex items-center gap-2 rounded-sm border border-accent-border bg-accent/10 px-3 py-2 text-accent transition-[background-color,scale] duration-150 ease-out hover:bg-accent/20 active:scale-[0.97]"
+					className="inline-flex items-center gap-2 rounded-sm border border-accent-border bg-accent/10 px-3 py-2 text-accent transition-[background-color,scale] duration-150 ease-out-strong hover:bg-accent/20 active:scale-[0.97]"
 				>
 					<Mail className="size-3.5" />
 					open contact.md
@@ -122,7 +122,7 @@ function Home() {
 				</Link>
 				<Link
 					to="/projects"
-					className="inline-flex items-center gap-2 rounded-sm border border-divider px-3 py-2 text-subtle transition-[color,border-color,scale] duration-150 ease-out hover:border-accent-border hover:text-accent active:scale-[0.97]"
+					className="inline-flex items-center gap-2 rounded-sm border border-divider px-3 py-2 text-subtle transition-[color,border-color,scale] duration-150 ease-out-strong hover:border-accent-border hover:text-accent active:scale-[0.97]"
 				>
 					<FolderGit2 className="size-3.5" />
 					projects.md

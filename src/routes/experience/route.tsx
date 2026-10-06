@@ -44,7 +44,6 @@ const timeline = [
 		period: "Nov 2023 — Present",
 		title: "Full-Stack Engineer · frontend-focused",
 		company: "Plainly",
-		active: true,
 		context:
 			"Video automation, remote. Small team — three of us on engineering — and the platform renders somewhere around 300,000 videos a month.",
 		points: [
@@ -129,7 +128,6 @@ const timeline = [
 		period: "Nov 2022 — Nov 2023",
 		title: "Full-Stack Developer",
 		company: "Positive Tech",
-		active: false,
 		context: "Software outsourcing, Novi Sad.",
 		points: [
 			{
@@ -157,7 +155,6 @@ const timeline = [
 		period: "Oct 2022 — Nov 2022",
 		title: "Full Stack JavaScript Developer",
 		company: "Levi9 Technology Services",
-		active: false,
 		context: "Internship, Novi Sad.",
 		points: [
 			{ id: "stack", body: "TypeScript, Node.js and JavaScript." },
@@ -200,9 +197,6 @@ function RouteComponent() {
 										<span className="absolute left-1/2 top-2 bottom-0 w-px -translate-x-1/2 bg-divider" />
 									)}
 									<span className="relative mt-1 flex size-2">
-										{item.active && (
-											<span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-										)}
 										<span className="relative inline-flex size-2 rounded-full bg-accent" />
 									</span>
 								</div>

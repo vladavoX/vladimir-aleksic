@@ -90,7 +90,7 @@ function CopyButton({ value }: { value: string }) {
 			type="button"
 			onClick={copy}
 			data-copied={copied || undefined}
-			className="group/copy grid shrink-0 cursor-pointer p-1 text-muted transition-[color,scale] duration-150 ease-out hover:text-accent active:scale-[0.97]"
+			className="group/copy grid shrink-0 cursor-pointer p-1 text-muted transition-[color,scale] duration-150 ease-out-strong hover:text-accent active:scale-[0.97]"
 		>
 			<span className="sr-only">{copied ? "Copied" : `Copy ${value}`}</span>
 			{/* Both glyphs stay mounted in one grid cell and crossfade, so the swap

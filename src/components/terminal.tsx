@@ -272,13 +272,11 @@ export function Terminal() {
 					</Kbd>
 				</KbdGroup>
 			</button>
-			{/* `transition-none` while undecided so the handover from the media
-			    query to `data-open` cannot animate. The two agree on height at
-			    every width, so there is nothing to animate — this makes that a
-			    guarantee rather than an argument. */}
+			{/* No open/close animation: the panel is a keyboard toggle (Ctrl+`),
+			    and animating `height` would reflow the editor pane every frame. */}
 			<div
 				inert={open === false}
-				className="h-0 overflow-hidden transition-[height] duration-200 ease-out-strong group-data-open:h-48 group-data-undecided:transition-none group-data-undecided:sm:h-48"
+				className="h-0 overflow-hidden group-data-open:h-48 group-data-undecided:sm:h-48"
 			>
 				<div ref={bodyRef} className="h-48 overflow-y-auto px-4 pb-2">
 					{lines.map((line) => {
