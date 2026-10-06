@@ -315,7 +315,10 @@ export function Terminal() {
 							</p>
 						);
 					})}
-					<div className="flex items-center gap-2">
+					{/* 16px on touch: iOS zooms into any input under 16px on focus and
+					    never zooms back out. The prompt scales with it so the row
+					    still reads as one line. */}
+					<div className="flex items-center gap-2 pointer-coarse:text-base">
 						<span className="shrink-0 text-accent">{PROMPT}</span>
 						<input
 							ref={inputRef}
@@ -324,6 +327,11 @@ export function Terminal() {
 							onKeyDown={onKeyDown}
 							spellCheck={false}
 							autoComplete="off"
+							// Commands are case-sensitive, and iOS would otherwise send
+							// "Help" for "help".
+							autoCapitalize="none"
+							autoCorrect="off"
+							enterKeyHint="go"
 							aria-label="Terminal input"
 							className="flex-1 bg-transparent outline-none"
 						/>

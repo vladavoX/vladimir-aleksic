@@ -84,7 +84,13 @@ export const Route = createRootRoute({
 		return {
 			meta: [
 				{ charSet: "utf-8" },
-				{ name: "viewport", content: "width=device-width, initial-scale=1" },
+				// `resizes-content` makes the Android keyboard shrink the layout
+				// viewport like iOS does, so the terminal input stays above it.
+				{
+					name: "viewport",
+					content:
+						"width=device-width, initial-scale=1, interactive-widget=resizes-content",
+				},
 				{ title: TITLE },
 				{
 					name: "description",

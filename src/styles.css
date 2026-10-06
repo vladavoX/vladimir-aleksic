@@ -55,6 +55,26 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* An app shell, not a document: the page itself never scrolls, so a pull
+   past the top of a pane would only ever trigger pull-to-refresh. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
+/* Controls fire on tap with no double-tap-zoom wait, and a long press on
+   one doesn't select its label. Links stay selectable — the contact
+   addresses are content people copy. */
+button,
+a {
+  touch-action: manipulation;
+}
+
+button {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 ::selection {
   background-color: var(--color-accent);
   color: var(--color-black);

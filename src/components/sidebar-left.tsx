@@ -58,7 +58,7 @@ export function SidebarLeft({
 									inactiveProps={{
 										className: "hover:bg-white/5 group border-transparent",
 									}}
-									className="flex items-center w-full h-full py-2 pl-8 pr-4 border-l"
+									className="flex items-center w-full h-full py-2 pl-8 pr-4 border-l select-none"
 								>
 									<span className="flex items-center justify-center w-6 text-mid mr-2">
 										{file.icon}

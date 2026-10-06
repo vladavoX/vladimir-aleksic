@@ -42,7 +42,7 @@ export function Main({
 						// and both screen readers and keyboard focus trip over it.
 						<li
 							key={tab}
-							className="flex h-8 shrink-0 items-center border-b border-transparent hover:border-divider has-[a[aria-current=page]]:border-accent has-[a[aria-current=page]]:bg-accent/10"
+							className="flex h-8 shrink-0 select-none items-center border-b border-transparent hover:border-divider has-[a[aria-current=page]]:border-accent has-[a[aria-current=page]]:bg-accent/10"
 						>
 							<Link
 								to={tab}
